@@ -1,0 +1,142 @@
+[
+  {
+    "providedService": {
+      "serviceDefinition": "SetSlaveAddress",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": {
+      }
+    },
+    "provider": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "serviceUri": "modbus/SetSlaveAddress/{slave_address}",
+    "udp": false,
+    "endOfValidity": "2020-01-01T00:00:00.000",
+    "version": 1
+  }, 
+
+  {
+    "providedService": {
+      "serviceDefinition": "GetCoils",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": {
+      }
+    },
+    "provider": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "serviceUri": "modbus/GetCoils/{offset}/{quantity}",
+    "udp": false,
+    "endOfValidity": "2020-01-01T00:00:00.000",
+    "version": 1
+  },
+
+  {
+    "providedService": {
+      "serviceDefinition": "GetRegisters",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": {
+      }
+    },
+    "provider": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "serviceUri": "modbus/GetRegisters/{offset}/{quantity}",
+    "udp": false,
+    "endOfValidity": "2020-01-01T00:00:00.000",
+    "version": 1
+  },
+
+  {
+    "providedService": {
+      "serviceDefinition": "SetCoils",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": {
+      }
+    },
+    "provider": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "serviceUri": "modbus/SetCoils",
+    "udp": false,
+    "endOfValidity": "2020-01-01T00:00:00.000",
+    "version": 1
+  },
+
+  {
+    "providedService": {
+      "serviceDefinition": "SetCoilsAtCertainAddress",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": {
+      }
+    },
+    "provider": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "serviceUri": "modbus/SetCoils/{offset}/{values}",
+    "udp": false,
+    "endOfValidity": "2020-01-01T00:00:00.000",
+    "version": 1
+  },
+
+  {
+    "providedService": {
+      "serviceDefinition": "SetRegisters",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": {
+      }
+    },
+    "provider": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "serviceUri": "modbus/SetRegisters",
+    "udp": false,
+    "endOfValidity": "2020-01-01T00:00:00.000",
+    "version": 1
+  },
+
+  {
+    "providedService": {
+      "serviceDefinition": "SetRegistersAtCertainAddress",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": {
+      }
+    },
+    "provider": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "serviceUri": "modbus/SetRegisters/{offset}/{values}",
+    "udp": false,
+    "endOfValidity": "2020-01-01T00:00:00.000",
+    "version": 1
+  }
+
+]
