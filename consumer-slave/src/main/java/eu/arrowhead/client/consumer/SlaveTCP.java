@@ -10,41 +10,49 @@ import java.util.Observer;
 import com.intelligt.modbus.jlibmodbus.Modbus;
 import com.intelligt.modbus.jlibmodbus.data.DataHolder;
 import com.intelligt.modbus.jlibmodbus.data.ModbusCoils;
+import com.intelligt.modbus.jlibmodbus.data.ModbusHoldingRegisters;
 import com.intelligt.modbus.jlibmodbus.exception.IllegalDataAddressException;
 import com.intelligt.modbus.jlibmodbus.exception.IllegalDataValueException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
 import com.intelligt.modbus.jlibmodbus.slave.ModbusSlave;
 import com.intelligt.modbus.jlibmodbus.slave.ModbusSlaveFactory;
 import com.intelligt.modbus.jlibmodbus.tcp.TcpParameters;
-import com.intelligt.modbus.jlibmodbus.utils.DataUtils;
 import com.intelligt.modbus.jlibmodbus.utils.FrameEvent;
 import com.intelligt.modbus.jlibmodbus.utils.FrameEventListener;
 import com.intelligt.modbus.jlibmodbus.utils.ModbusSlaveTcpObserver;
 import com.intelligt.modbus.jlibmodbus.utils.TcpClientInfo;
 
+import eu.arrowhead.client.common.Utility;
+import eu.arrowhead.client.common.misc.TypeSafeProperties;
+
 public class SlaveTCP {
+	private TypeSafeProperties props = Utility.getProp();
 	private Consumer consumer;
 	private ModbusSlave slave;
 	private TcpParameters tcpParameters = new TcpParameters();
-	private ModbusCoils hc = new ModbusCoils(20);
+	private int range = Integer.valueOf(props.getProperty("coil_register_memory_range", "100"));;
+	private ModbusCoils hc = new ModbusCoils(range);
+	private ModbusCoils hcd = new ModbusCoils(range);
+	private ModbusHoldingRegisters hr = new ModbusHoldingRegisters(range); 
+	private ModbusHoldingRegisters hri = new ModbusHoldingRegisters(range);
 	private MyOwnDataHolder dh = new MyOwnDataHolder();
 	
 	public SlaveTCP(String[] args){
 		this.consumer = new Consumer(args);
+		String address = props.getProperty("remote_io_address", "10.12.90.14");
+		consumer.setServerAddress(address);
 		try {
 			setSlave();
 		} catch (IllegalDataAddressException | IllegalDataValueException
 				| UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public void startSlave(){
+ 	public void startSlave(){
 		try {
 			slave.listen();
 		} catch (ModbusIOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -67,35 +75,61 @@ public class SlaveTCP {
 	    tcpParameters.setKeepAlive(true);
 	    tcpParameters.setPort(502);
 	}
-	
-	public ModbusCoils getCoils(){
-		return hc;
-	}
-	
-	public void setCoils(ModbusCoils hc){
-		this.hc = hc;
-	}
-	
+
 	private void setDataHolder() throws IllegalDataAddressException, IllegalDataValueException{
 		dh.addEventListener(new ModbusEventListener() {
-			@Override
-            public void onWriteToSingleCoil(int address, boolean value) {
-				boolean[] values = new boolean[]{value};
-				consumer.setCoilsAtID(address, values);
-                // System.out.print("onWriteToSingleCoil: address " + address + ", value " + value + "\n");
-            }
-
             @Override
-			public void onReadMultipleCoils(int address, int quantity) throws IllegalDataAddressException, IllegalDataValueException{
+			public void onReadMultipleCoils(int address, int quantity) {
 				// System.out.print("onReadMultipleCoils: address " + address + ", quantity " + quantity + "\n");
 				HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
 				valuesMap = consumer.getCoils(address, quantity).getCoilsInput();
-				for(int index = 0; index <quantity; index++){
+				for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
-					hc.set(offsetIndex, valuesMap.get(offsetIndex));
+					try {
+						hc.set(offsetIndex, valuesMap.get(offsetIndex));
+					} catch (IllegalDataAddressException
+							| IllegalDataValueException e) {
+						e.printStackTrace();
+					}
 				}
-				// slave.getDataHolder().setCoils(hc);
 			}
+            
+            @Override
+            public void onReadMultipeDiscreteInputs(int address, int quantity){
+            	// TODO write code
+            }
+            
+            @Override
+            public void onReadSingleHoldingResgister(int address) {
+            	onReadMultipleHoldingRegisters(address, 1);
+            }
+            
+            @Override
+            public void onReadMultipleHoldingRegisters(int address, int quantity) {
+            	HashMap<Integer, Integer> valuesMap = new HashMap<Integer, Integer>();
+            	valuesMap = consumer.getRegisters(address, quantity).getRegistersInput();
+            	for(int index = 0; index < quantity; index++){
+					int offsetIndex = address + index;
+					try {
+						hr.set(offsetIndex, valuesMap.get(offsetIndex));
+					} catch (IllegalDataAddressException
+							| IllegalDataValueException e) {
+						e.printStackTrace();
+					}
+				}
+            }
+            
+            @Override
+            public void onReadMultipleInputRegisters(int address, int quantity){
+            	// TODO write code
+            }
+            
+            @Override
+            public void onWriteToSingleCoil(int address, boolean value) {
+				// System.out.print("onWriteToSingleCoil: address " + address + ", value " + value + "\n");
+				boolean[] values = new boolean[]{value};
+				consumer.setCoilsAtID(address, values);
+            }
             
             @Override
             public void onWriteToMultipleCoils(int address, int quantity, boolean[] values) {
@@ -119,6 +153,9 @@ public class SlaveTCP {
         slave.setDataHolder(dh);
         // hc.set(0, Boolean.TRUE);
         slave.getDataHolder().setCoils(hc);
+        slave.getDataHolder().setDiscreteInputs(hcd);
+        slave.getDataHolder().setHoldingRegisters(hr);
+        slave.getDataHolder().setInputRegisters(hri);
 	}
 	
 	private void setFrameEventListener(){
@@ -152,10 +189,18 @@ public class SlaveTCP {
 	}
 	
 	public interface ModbusEventListener {
+        void onReadMultipleCoils(int address, int quantity);
+        
+        void onReadMultipeDiscreteInputs(int address, int quantity);
+        
+        void onReadSingleHoldingResgister(int address);
+        
+        void onReadMultipleHoldingRegisters(int address, int quantity);
+        
+        void onReadMultipleInputRegisters(int address, int quantity);
+
         void onWriteToSingleCoil(int address, boolean value);
         
-        void onReadMultipleCoils(int address, int quantity) throws IllegalDataAddressException, IllegalDataValueException;
-
         void onWriteToMultipleCoils(int address, int quantity, boolean[] values);
 
         void onWriteToSingleHoldingRegister(int address, int value);
@@ -212,11 +257,47 @@ public class SlaveTCP {
         
         @Override
         public boolean[] readCoilRange(int offset, int quantity) throws IllegalDataAddressException, IllegalDataValueException{
-        	boolean[] values = super.readCoilRange(offset, quantity);
         	for (ModbusEventListener l : modbusEventListenerList) {
                 l.onReadMultipleCoils(offset, quantity);
             }
+        	boolean[] values = super.readCoilRange(offset, quantity);
             return values;
+        }
+        
+        @Override
+        public boolean[] readDiscreteInputRange(int offset, int quantity) throws IllegalDataAddressException, IllegalDataValueException {
+        	for (ModbusEventListener l : modbusEventListenerList) {
+                l.onReadMultipeDiscreteInputs(offset, quantity);
+            }
+        	boolean[] values = super.readDiscreteInputRange(offset, quantity);
+        	return values;
+        }
+        
+        @Override
+        public int readHoldingRegister(int offset) throws IllegalDataAddressException {
+        	for (ModbusEventListener l : modbusEventListenerList) {
+                l.onReadSingleHoldingResgister(offset);
+            }
+        	int value = super.readHoldingRegister(offset);
+        	return value;
+        }
+        
+        @Override
+        public int[] readHoldingRegisterRange(int offset, int quantity) throws IllegalDataAddressException {
+        	for (ModbusEventListener l : modbusEventListenerList) {
+                l.onReadMultipleHoldingRegisters(offset, quantity);
+            }
+        	int[] values = super.readHoldingRegisterRange(offset, quantity);
+        	return values;
+        }
+        
+        @Override
+        public int[] readInputRegisterRange(int offset, int quantity) throws IllegalDataAddressException {
+        	for (ModbusEventListener l : modbusEventListenerList) {
+                l.onReadMultipleInputRegisters(offset, quantity);
+            }
+        	int[] values = super.readInputRegisterRange(offset, quantity);
+        	return values;
         }
     }
 	

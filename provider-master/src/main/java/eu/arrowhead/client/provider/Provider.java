@@ -26,7 +26,7 @@ public class Provider extends ArrowheadClientMain {
 	static PublicKey authorizationKey;
 	static PrivateKey privateKey;
 	private List<String> argsList = new ArrayList<String>();
-	private boolean NEED_SR = true;
+	private boolean NEED_SR = false;
 	private boolean NEED_AUTH = false;
 	private boolean NEED_ORCH = false;
 	private String SR_BASE_URI;

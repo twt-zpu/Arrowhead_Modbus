@@ -5,18 +5,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class App {
-	private static SlaveTCP Salve;
+	private static SlaveTCP slave;
 	
 	public static void main(String[] args) {
-		Salve = new SlaveTCP(args);
+		slave = new SlaveTCP(args);
 		Thread thread = new Thread(new Runnable(){
 			public void run(){
-				Salve.startSlave();
+				slave.startSlave();
 			}
 		});
 		thread.start();
 		
-		System.out.println("Type \"stop\" to shutdown Server...");
+		System.out.println("Type \"stop\" to shutdown Consumer...");
 	    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String input = "";
 		try {

@@ -34,8 +34,6 @@ import eu.arrowhead.client.common.model.ServiceRequestForm;
 
 public class Consumer {
 	private String slaveAddress;
-	private int offset;
-	private int quantity;
 	private String coilOutputs;
 	private String registerOutputs;
 	private HashMap<Integer, Boolean> coilsMap;
@@ -62,19 +60,15 @@ public class Consumer {
     
     public ModbusMeasurementEntry getCoils(int offset, int quantity){
     	String method = "GetCoils";
-    	this.offset = offset;
-    	this.quantity = quantity;
     	ServiceRequestForm srf = compileSRF(method);
-    	String providerUrl = sendOrchestrationRequest(srf, method);
+    	String providerUrl = sendOrchestrationRequest(srf, method, offset, quantity);
     	return consumeService(providerUrl);
     }
     
     public ModbusMeasurementEntry getRegisters(int offset, int quantity){
     	String method = "GetRegisters";
-    	this.offset = offset;
-    	this.quantity = quantity;
     	ServiceRequestForm srf = compileSRF(method);
-    	String providerUrl = sendOrchestrationRequest(srf, method);
+    	String providerUrl = sendOrchestrationRequest(srf, method, offset, quantity);
     	return consumeService(providerUrl);
     }
     
@@ -88,13 +82,12 @@ public class Consumer {
     
     public void setCoilsAtID(int offset, boolean[] values){
     	String method = "SetCoilsAtCertainAddress";
-    	this.offset = offset;
     	if (values.length > 0)
     		this.coilOutputs = String.valueOf(values[0]);
     	for (int idx = 1; idx < values.length; idx++)
     		this.coilOutputs += "-" + String.valueOf(values[idx]);
     	ServiceRequestForm srf = compileSRF(method);
-    	String providerUrl = sendOrchestrationRequest(srf, method);
+    	String providerUrl = sendOrchestrationRequest(srf, method, offset);
     	consumeService(providerUrl);
     }
     
@@ -108,13 +101,12 @@ public class Consumer {
     
     public void setRegistersAtID(int offset, int[] values){
     	String method = "SetRegistersAtCertainAddress";
-    	this.offset = offset;
     	if (values.length > 0)
     		this.registerOutputs = String.valueOf(values[0]);
     	for (int idx = 1; idx < values.length; idx++)
     		this.registerOutputs += "-" + String.valueOf(values[idx]);
     	ServiceRequestForm srf = compileSRF(method);
-    	String providerUrl = sendOrchestrationRequest(srf, method);
+    	String providerUrl = sendOrchestrationRequest(srf, method, offset);
     	consumeService(providerUrl);
     }
 
@@ -181,13 +173,25 @@ public class Consumer {
 
     private ModbusMeasurementEntry consumeService(String providerUrl){
     	Response getResponse = Utility.sendRequest(providerUrl, "GET", null);
-        ModbusMeasurement readout = new ModbusMeasurement();
-        readout = getResponse.readEntity(ModbusMeasurement.class);
+        ModbusMeasurement readout = getResponse.readEntity(ModbusMeasurement.class);
         // System.out.println("Provider Response payload (get): " + Utility.toPrettyJson(null, readout));
-        return readout.getE();
+        if (!readout.getE().isEmpty()){
+        	System.out.println("Provider Response payload (get): " + Utility.toPrettyJson(null, readout));
+        	return readout.getE().get(0);
+        }
+        else
+        	return new ModbusMeasurementEntry();
     }
     
     private String sendOrchestrationRequest(ServiceRequestForm srf, String method) {
+    	return sendOrchestrationRequest(srf, method, 0, 0);
+    }
+    
+    private String sendOrchestrationRequest(ServiceRequestForm srf, String method, int offset) {
+    	return sendOrchestrationRequest(srf, method, offset, 0);
+    }
+    
+    private String sendOrchestrationRequest(ServiceRequestForm srf, String method, int offset, int quantity) {
         Response postResponse = Utility.sendRequest(orchestratorUrl, "POST", srf);
         OrchestrationResponse orchResponse = postResponse.readEntity(OrchestrationResponse.class);
         // System.out.println("Orchestration Response payload: " + Utility.toPrettyJson(null, orchResponse));
@@ -202,12 +206,12 @@ public class Consumer {
             ub.port(provider.getPort());
         switch(method) {
         case "SetSlaveAddress": setUri_SetSlaveAddress(ub, serviceURI); break;
-        case "GetCoils": setUri_GetCoils(ub, serviceURI); break;
-        case "GetRegisters": setUri_GetRegisters(ub, serviceURI); break;
+        case "GetCoils": setUri_GetCoils(ub, serviceURI, offset, quantity); break;
+        case "GetRegisters": setUri_GetRegisters(ub, serviceURI, offset, quantity); break;
         case "SetCoils": setUri_SetCoils(ub, serviceURI); break;
-        case "SetCoilsAtCertainAddress": setUri_SetCoilsAtCertainAddress(ub, serviceURI); break;
+        case "SetCoilsAtCertainAddress": setUri_SetCoilsAtCertainAddress(ub, serviceURI, offset); break;
         case "SetRegisters": setUri_SetRegisters(ub, serviceURI); break;
-        case "SetRegistersAtCertainAddress": setUri_SetRegistersAtCertainAddress(ub, serviceURI); break;
+        case "SetRegistersAtCertainAddress": setUri_SetRegistersAtCertainAddress(ub, serviceURI, offset); break;
         default: setUri_rest(ub, serviceURI); break;
         }
         
@@ -222,25 +226,25 @@ public class Consumer {
     
     private void setUri_SetSlaveAddress(UriBuilder ub, String serviceURI){
     	if (slaveAddress != null)
-    		serviceURI.replaceAll("{slave_address}", slaveAddress);
+    		serviceURI = serviceURI.replace("{slave_address}", slaveAddress);
     	if (serviceURI != null)
             ub.path(serviceURI);
     }
     
-    private void setUri_GetCoils(UriBuilder ub, String serviceURI){
+    private void setUri_GetCoils(UriBuilder ub, String serviceURI, int offset, int quantity){
     	if (offset >= 0)
-    		serviceURI.replaceAll("{offset}", String.valueOf(offset));
+    		serviceURI = serviceURI.replace("{offset}", String.valueOf(offset));
     	if (quantity > 0)
-    		serviceURI.replaceAll("{quantity}", String.valueOf(quantity));
+    		serviceURI = serviceURI.replace("{quantity}", String.valueOf(quantity));
     	if (serviceURI != null)
             ub.path(serviceURI);
     }
     
-    private void setUri_GetRegisters(UriBuilder ub, String serviceURI){
+    private void setUri_GetRegisters(UriBuilder ub, String serviceURI, int offset, int quantity){
     	if (offset >= 0)
-    		serviceURI.replaceAll("{offset}", String.valueOf(offset));
+    		serviceURI = serviceURI.replace("{offset}", String.valueOf(offset));
     	if (quantity > 0)
-    		serviceURI.replaceAll("{quantity}", String.valueOf(quantity));
+    		serviceURI = serviceURI.replace("{quantity}", String.valueOf(quantity));
     	if (serviceURI != null)
             ub.path(serviceURI);
     }
@@ -256,11 +260,11 @@ public class Consumer {
     	}
     }
     
-    private void setUri_SetCoilsAtCertainAddress(UriBuilder ub, String serviceURI){
+    private void setUri_SetCoilsAtCertainAddress(UriBuilder ub, String serviceURI, int offset){
     	if (offset >= 0)
-    		serviceURI.replaceAll("{offset}", String.valueOf(offset));
+    		serviceURI = serviceURI.replace("{offset}", String.valueOf(offset));
     	if (coilOutputs != null)
-    		serviceURI.replaceAll("{values}", coilOutputs);
+    		serviceURI = serviceURI.replace("{values}", coilOutputs);
     	if (serviceURI != null)
             ub.path(serviceURI);
     }
@@ -276,11 +280,11 @@ public class Consumer {
     	}
     }
     
-    private void setUri_SetRegistersAtCertainAddress(UriBuilder ub, String serviceURI){
+    private void setUri_SetRegistersAtCertainAddress(UriBuilder ub, String serviceURI, int offset){
     	if (offset >= 0)
-    		serviceURI.replaceAll("{offset}", String.valueOf(offset));
+    		serviceURI = serviceURI.replace("{offset}", String.valueOf(offset));
     	if (registerOutputs != null)
-    		serviceURI.replaceAll("{values}", registerOutputs);
+    		serviceURI = serviceURI.replace("{values}", registerOutputs);
     	if (serviceURI != null)
             ub.path(serviceURI);
     }

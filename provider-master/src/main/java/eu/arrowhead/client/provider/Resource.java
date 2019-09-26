@@ -1,5 +1,6 @@
 package eu.arrowhead.client.provider;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 
 import eu.arrowhead.client.common.model.ModbusMeasurement;
+import eu.arrowhead.client.common.model.ModbusMeasurementEntry;
 
 
 @Path("/")
@@ -23,8 +25,7 @@ import eu.arrowhead.client.common.model.ModbusMeasurement;
 @Produces(MediaType.APPLICATION_JSON)
 
 public class Resource {
-	static final String SERVICE_GET_URI = "modbus/GetCoils";
-	static final String SERVICE_SET_URI = "modbus/SetCoils";
+	private String providerName = "master";
 	private static MasterTCP master = new MasterTCP();
 
 	@GET
@@ -32,6 +33,7 @@ public class Resource {
 	public Response setServerAddress(@Context SecurityContext context, @QueryParam("token") String token, 
 			@QueryParam("signature") String signature, @PathParam("slave_address") String address) {
 		master.setModbusMaster(address);
+		System.out.println("set slave adress");
 	    return Response.status(Status.OK).build();
 	}
 	
@@ -39,27 +41,35 @@ public class Resource {
 	@Path("modbus/GetCoils/{offset}/{quantity}")
 	public Response getCoils(@Context SecurityContext context, @QueryParam("token") String token, 
 			@QueryParam("signature") String signature, @PathParam("offset") int offset, @PathParam("quantity") int quantity) {
-	    String providerName = "FeldbusCouplerL";
-	    ModbusMeasurement coils = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
+	    
+	    ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
+	    ModbusMeasurementEntry entry = new ModbusMeasurementEntry();
+	    List<ModbusMeasurementEntry> entryList = new ArrayList<>();
 	    HashMap<Integer, Boolean> coilsInput = master.readMasterCoils(offset, quantity);
-	    coils.getE().setCoilsInput(coilsInput);
-	    return Response.status(Status.OK).entity(coils).build();
+	    entry.setCoilsInput(coilsInput);
+	    entryList.add(entry);
+	    measurement.setE(entryList);
+	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	
 	@GET
 	@Path("modbus/GetRegisters/{offset}/{quantity}")
 	public Response getRegisters(@Context SecurityContext context, @QueryParam("token") String token, 
 			@QueryParam("signature") String signature, @PathParam("offset") int offset, @PathParam("quantity") int quantity) {
-	    String providerName = "FeldbusCouplerL";
-	    ModbusMeasurement coils = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
+	    ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
+	    ModbusMeasurementEntry entry = new ModbusMeasurementEntry();
+	    List<ModbusMeasurementEntry> entryList = new ArrayList<>();
 	    HashMap<Integer, Integer> registersInput = master.readMasterRegisters(offset, quantity);
-	    coils.getE().setRegistersInput(registersInput);
-	    return Response.status(Status.OK).entity(coils).build();
+	    entry.setRegistersInput(registersInput);
+	    entryList.add(entry);
+	    measurement.setE(entryList);
+	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	
 	@GET
 	@Path("modbus/SetCoils")
 	public Response setCoils(@QueryParam("coil") List<String> coilsList) {
+		ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
 		HashMap<Integer, Boolean> coilsMap = new HashMap<Integer, Boolean>();
 		for (String coil : coilsList){
 			String[] coil_key_value = coil.split("-");
@@ -68,25 +78,27 @@ public class Resource {
 			coilsMap.put(key, value);
 		}
 		master.writeMasterCoils(coilsMap);
-	    return Response.status(Status.ACCEPTED).build();
+	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	
 	@GET
 	@Path("modbus/SetCoils/{offset}/{values}")
 	public Response setCoilsAtID(@Context SecurityContext context, @QueryParam("token") String token, 
 			@QueryParam("signature") String signature, @PathParam("offset") int offset, @PathParam("values") String values) {
+		ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
 		String[] valuesString = values.split("-");
 		boolean[] valuesBoolean = new boolean[valuesString.length];
 		for (int idx = 0; idx < valuesString.length; idx++){
 			valuesBoolean[idx] = Boolean.valueOf(valuesString[idx]);
 		}
 		master.writeMasterCoilsAtID(offset, valuesBoolean);
-	    return Response.status(Status.ACCEPTED).build();
+	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	
 	@GET
 	@Path("modbus/SetRegisters")
 	public Response SetRegisters(@QueryParam("coil") List<String> coilsList) {
+		ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
 		HashMap<Integer, Boolean> coilsMap = new HashMap<Integer, Boolean>();
 		for (String coil : coilsList){
 			String[] coil_key_value = coil.split("-");
@@ -95,19 +107,20 @@ public class Resource {
 			coilsMap.put(key, value);
 		}
 		master.writeMasterCoils(coilsMap);
-	    return Response.status(Status.ACCEPTED).build();
+	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	
 	@GET
 	@Path("modbus/SetRegisters/{offset}/{values}")
 	public Response setRegistersAtID(@Context SecurityContext context, @QueryParam("token") String token, 
 			@QueryParam("signature") String signature, @PathParam("offset") int offset, @PathParam("values") String values) {
+		ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
 		String[] valuesString = values.split("-");
 		int[] valuesInt = new int[valuesString.length];
 		for (int idx = 0; idx < valuesString.length; idx++){
 			valuesInt[idx] = Integer.valueOf(valuesString[idx]);
 		}
 		master.writeMasterRegistersAtID(offset, valuesInt);
-	    return Response.status(Status.ACCEPTED).build();
+	    return Response.status(Status.OK).entity(measurement).build();
 	}
 }

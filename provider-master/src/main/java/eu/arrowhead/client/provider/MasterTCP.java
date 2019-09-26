@@ -1,9 +1,8 @@
 package eu.arrowhead.client.provider;
 
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 
 import com.intelligt.modbus.jlibmodbus.Modbus;
@@ -13,8 +12,6 @@ import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMasterFactory;
 import com.intelligt.modbus.jlibmodbus.tcp.TcpParameters;
-
-import eu.arrowhead.client.common.model.ModbusMeasurement;
 
 public class MasterTCP {
 	private TcpParameters tcpParameters = new TcpParameters();
@@ -152,7 +149,12 @@ public class MasterTCP {
 	
 	private void setTCPParameters(String address){
 		try{
-			tcpParameters.setHost(InetAddress.getByName(address));
+			String[] nums = address.split("\\.");
+			byte[] ip = {0, 0, 0, 0};
+			if (nums.length == 4)
+				for (int idx = 0; idx < nums.length ; idx++)
+					ip[idx] = Byte.valueOf(nums[idx]);
+			tcpParameters.setHost(InetAddress.getByAddress(ip));
 	        tcpParameters.setKeepAlive(true);
 	        tcpParameters.setPort(502);
 		} catch (RuntimeException e) {
@@ -166,6 +168,16 @@ public class MasterTCP {
 		setTCPParameters(address);
 		master = ModbusMasterFactory.createModbusMasterTCP(tcpParameters);
         Modbus.setAutoIncrementTransactionId(true);
+        if (!master.isConnected())
+			try {
+				master.connect();
+			} catch (ModbusIOException e) {
+				// TODO Auto-generated catch block
+				System.out.println("cannot connected with " + address);
+				e.printStackTrace();
+			}
+        if (master.isConnected())
+        	System.out.println("connected with " + address);
 	}
 	
 	

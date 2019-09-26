@@ -8,7 +8,7 @@ public class ModbusMeasurement {
     private double bt;
     private String bu;
     private int ver;
-    private ModbusMeasurementEntry e = new ModbusMeasurementEntry();
+    private List<ModbusMeasurementEntry> e = new ArrayList<>();
 
     public ModbusMeasurement() {
     }
@@ -20,7 +20,7 @@ public class ModbusMeasurement {
         this.ver = ver;
     }
 
-    public ModbusMeasurement(String bn, double bt, String bu, int ver, ModbusMeasurementEntry e) {
+    public ModbusMeasurement(String bn, double bt, String bu, int ver, List<ModbusMeasurementEntry> e) {
         super();
         this.bn = bn;
         this.bt = bt;
@@ -61,11 +61,11 @@ public class ModbusMeasurement {
         this.ver = ver;
     }
 
-    public ModbusMeasurementEntry getE() {
+    public List<ModbusMeasurementEntry> getE() {
         return e;
     }
 
-    public void setE(ModbusMeasurementEntry e) {
+    public void setE(List<ModbusMeasurementEntry> e) {
         this.e = e;
     }
 }
