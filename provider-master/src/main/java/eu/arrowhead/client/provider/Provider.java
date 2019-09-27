@@ -33,7 +33,7 @@ public class Provider extends ArrowheadClientMain {
 
 	//JSON payloads
 	private List<ServiceRegistryEntry> srEntries = new ArrayList<>();
-	private IntraCloudAuthEntry authEntry;
+	private List<IntraCloudAuthEntry> authEntries = new ArrayList<>();
 	private List<OrchestrationStore> storeEntry = new ArrayList<>();
 	
 	public Provider(String[] args){
@@ -93,7 +93,7 @@ public class Provider extends ArrowheadClientMain {
 		}
 		if (NEED_AUTH) {
 			String authPath = props.getProperty("auth_entry");
-			authEntry = Utility.fromJson(Utility.loadJsonFromFile(authPath), IntraCloudAuthEntry.class);
+			authEntries = Arrays.asList(Utility.fromJson(Utility.loadJsonFromFile(authPath), IntraCloudAuthEntry[].class));
 		}
 		if (NEED_ORCH) {
 			String storePath = props.getProperty("store_entry");
@@ -101,7 +101,7 @@ public class Provider extends ArrowheadClientMain {
 		}
 		
 		System.out.println("Service Registry Entry: " + Utility.toPrettyJson(null, srEntries));
-		System.out.println("IntraCloud Auth Entry: " + Utility.toPrettyJson(null, authEntry));
+		System.out.println("IntraCloud Auth Entry: " + Utility.toPrettyJson(null, authEntries));
 		System.out.println("Orchestration Store Entry: " + Utility.toPrettyJson(null, storeEntry));
 	}
 	
@@ -144,7 +144,8 @@ public class Provider extends ArrowheadClientMain {
 		int authPort = isSecure ? props.getIntProperty("auth_secure_port", 8445) : props.getIntProperty("auth_insecure_port", 8444);
 		String authUri = Utility.getUri(authAddress, authPort, "authorization/mgmt/intracloud", isSecure, false);
 		try {
-			Utility.sendRequest(authUri, "POST", authEntry);
+			for (IntraCloudAuthEntry authEntry : authEntries)
+				Utility.sendRequest(authUri, "POST", authEntry);
 			System.out.println("Authorization registration is successful!");
 		} catch (ArrowheadException e) {
 			e.printStackTrace();

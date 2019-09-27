@@ -84,16 +84,13 @@ public class MasterTCP {
 		for (Map.Entry<Integer, Boolean> entry : coilsMap.entrySet()){
 			int address = entry.getKey();
 			boolean value = entry.getValue();
-			new Thread(new Runnable(){
-				public void run(){
-					try {
-						master.writeSingleCoil(slaveId, address, value);
-					} catch (ModbusProtocolException | ModbusNumberException
-							| ModbusIOException e) {
-						e.printStackTrace();
-					}
-				}
-			}).start();
+			try {
+				master.writeSingleCoil(slaveId, address, value);
+			} catch (ModbusProtocolException | ModbusNumberException
+					| ModbusIOException e) {
+				e.printStackTrace();
+			}
+				
 		}
 	}
 	
