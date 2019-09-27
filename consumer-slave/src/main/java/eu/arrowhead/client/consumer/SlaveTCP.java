@@ -96,7 +96,18 @@ public class SlaveTCP {
             
             @Override
             public void onReadMultipeDiscreteInputs(int address, int quantity){
-            	// TODO write code
+            	// System.out.print("onReadMultipeDiscreteInputs: address " + address + ", quantity " + quantity + "\n");
+            	HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
+				valuesMap = consumer.getCoils(address, quantity).getCoilsInput();
+				for(int index = 0; index < quantity; index++){
+					int offsetIndex = address + index;
+					try {
+						hcd.set(offsetIndex, valuesMap.get(offsetIndex));
+					} catch (IllegalDataAddressException
+							| IllegalDataValueException e) {
+						e.printStackTrace();
+					}
+				}
             }
             
             @Override
@@ -121,7 +132,18 @@ public class SlaveTCP {
             
             @Override
             public void onReadMultipleInputRegisters(int address, int quantity){
-            	// TODO write code
+            	// System.out.print("onReadMultipleInputRegisters: address " + address + ", quantity " + quantity + "\n");
+            	HashMap<Integer, Integer> valuesMap = new HashMap<Integer, Integer>();
+				valuesMap = consumer.getCoils(address, quantity).getRegistersInput();
+				for(int index = 0; index < quantity; index++){
+					int offsetIndex = address + index;
+					try {
+						hri.set(offsetIndex, valuesMap.get(offsetIndex));
+					} catch (IllegalDataAddressException
+							| IllegalDataValueException e) {
+						e.printStackTrace();
+					}
+				}
             }
             
             @Override
@@ -151,7 +173,6 @@ public class SlaveTCP {
             }
         });
         slave.setDataHolder(dh);
-        // hc.set(0, Boolean.TRUE);
         slave.getDataHolder().setCoils(hc);
         slave.getDataHolder().setDiscreteInputs(hcd);
         slave.getDataHolder().setHoldingRegisters(hr);

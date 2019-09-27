@@ -175,10 +175,8 @@ public class Consumer {
     	Response getResponse = Utility.sendRequest(providerUrl, "GET", null);
         ModbusMeasurement readout = getResponse.readEntity(ModbusMeasurement.class);
         // System.out.println("Provider Response payload (get): " + Utility.toPrettyJson(null, readout));
-        if (!readout.getE().isEmpty()){
-        	System.out.println("Provider Response payload (get): " + Utility.toPrettyJson(null, readout));
+        if (!readout.getE().isEmpty())
         	return readout.getE().get(0);
-        }
         else
         	return new ModbusMeasurementEntry();
     }
