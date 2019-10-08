@@ -45,7 +45,7 @@ public class ModbusDataDisplay extends JFrame implements ModbusGUI {
 		setPanes();
 	}
 	
-	private void initSensorData(){
+	public void initSensorData(){
 		sensorModel.setValueAt("DI01_F4", 0, 0);
 		sensorModel.setValueAt("DI02_F3", 1, 0);
 		sensorModel.setValueAt("DI03_F11", 2, 0);
@@ -65,7 +65,7 @@ public class ModbusDataDisplay extends JFrame implements ModbusGUI {
 		sensorTable.setRowHeight(25);
 	}
 	
-	private void initAcutaorData(){
+	public void initAcutaorData(){
 		actuatorModel.setValueAt("DO01_C4", 0, 0);
 		actuatorModel.setValueAt("DO02_M2", 1, 0);
 		actuatorModel.setValueAt("DO03_C3", 2, 0);
@@ -86,7 +86,7 @@ public class ModbusDataDisplay extends JFrame implements ModbusGUI {
 		actuatorTable.setRowHeight(25);
 	}
 	
-	private void initCommunicationData(){
+	public void initCommunicationData(){
 		communicationModel.setValueAt("Arrowhead Server", 0, 0);
 		communicationModel.setValueAt("Arrowhead Client", 1, 0);
 		communicationModel.setValueAt("Modbus TCP", 2, 0);
@@ -140,7 +140,7 @@ public class ModbusDataDisplay extends JFrame implements ModbusGUI {
 	public void setAcutuatorData(HashMap<Integer, Boolean> data){
 		for (Map.Entry entry: data.entrySet()){
 			int row = (int)entry.getKey() - actuatorStartAddress;
-			sensorModel.setValueAt(entry.getValue(), row, 1);
+			actuatorModel.setValueAt(entry.getValue(), row, 1);
 		}
 	}
 	

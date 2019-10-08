@@ -109,6 +109,7 @@ public class Resource {
 			valuesBoolean[idx] = Boolean.valueOf(valuesString[idx]);
 			coilsMap.put(offset + idx, valuesBoolean[idx]);
 		}
+		frame.setAcutuatorData(coilsMap);
 		master.writeMasterCoilsAtID(offset, valuesBoolean);
 		modbusData.getEntry().setCoilsInput(offset, valuesBoolean);
 	    return Response.status(Status.OK).entity(measurement).build();

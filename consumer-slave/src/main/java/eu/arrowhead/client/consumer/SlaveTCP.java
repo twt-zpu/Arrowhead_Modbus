@@ -163,7 +163,7 @@ public class SlaveTCP {
             
             @Override
             public void onWriteToMultipleCoils(int address, int quantity, boolean[] values) {
-                // System.out.print("onWriteToMultipleCoils: address " + address + ", quantity " + quantity + "\n");
+                //System.out.print("onWriteToMultipleCoils: address " + address + ", quantity " + quantity + "\n");
             	HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
             	for(int idx = 0; idx < quantity; idx++)
             		valuesMap.put(address + idx, values[idx]);
@@ -210,14 +210,16 @@ public class SlaveTCP {
 		Observer o = new ModbusSlaveTcpObserver() {
             @Override
             public void clientAccepted(TcpClientInfo info) {
-                //System.out.println("Client connected " + info.getTcpParameters().getHost());
+                System.out.println("Client connected " + info.getTcpParameters().getHost());
                 frame.setCommunicationData("modbus", true);
             }
 
             @Override
             public void clientDisconnected(TcpClientInfo info) {
-                //System.out.println("Client disconnected " + info.getTcpParameters().getHost());
+                System.out.println("Client disconnected " + info.getTcpParameters().getHost());
                 frame.setCommunicationData("modbus", false);
+                frame.initSensorData();
+                frame.initAcutaorData();
             }
         };
         slave.addObserver(o);
