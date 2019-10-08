@@ -37,7 +37,7 @@ public class SlaveTCP {
 	private ModbusHoldingRegisters hri = new ModbusHoldingRegisters(range);
 	private MyOwnDataHolder dh = new MyOwnDataHolder();
 	
-	public SlaveTCP(String[] args){
+	public SlaveTCP(){
 		try {
 			setSlave();
 		} catch (IllegalDataAddressException | IllegalDataValueException
