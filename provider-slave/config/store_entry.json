@@ -1,0 +1,169 @@
+[
+  {
+    "service": {
+      "serviceDefinition": "SetSlaveAddress",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": {}
+    },
+    "consumer": {
+      "systemName": "slave",
+      "address": "10.12.90.10",
+      "port": 8081,
+      "authenticationInfo": "null"
+    },
+    "providerSystem": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "priority": 1,
+    "defaultEntry": false,
+    "attributes": { }
+  },
+
+  {
+    "service": {
+      "serviceDefinition": "GetCoils",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": { }
+    },
+    "consumer": {
+      "systemName": "slave",
+      "address": "10.12.90.10",
+      "port": 8081,
+      "authenticationInfo": "null"
+    },
+    "providerSystem": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "priority": 1,
+    "defaultEntry": false,
+    "attributes": { }
+  },
+
+  {
+    "service": {
+      "serviceDefinition": "GetRegisters",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": {}
+    },
+    "consumer": {
+      "systemName": "slave",
+      "address": "10.12.90.10",
+      "port": 8081,
+      "authenticationInfo": "null"
+    },
+    "providerSystem": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "priority": 1,
+    "defaultEntry": false,
+    "attributes": { }
+  },
+
+  {
+    "service": {
+      "serviceDefinition": "SetCoils",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": { }
+    },
+    "consumer": {
+      "systemName": "slave",
+      "address": "10.12.90.10",
+      "port": 8081,
+      "authenticationInfo": "null"
+    },
+    "providerSystem": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "priority": 1,
+    "defaultEntry": false,
+    "attributes": { }
+  },
+
+  {
+    "service": {
+      "serviceDefinition": "SetCoilsAtCertainAddress",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": {}
+    },
+    "consumer": {
+      "systemName": "slave",
+      "address": "10.12.90.10",
+      "port": 8081,
+      "authenticationInfo": "null"
+    },
+    "providerSystem": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "priority": 1,
+    "defaultEntry": false,
+    "attributes": { }
+  },
+
+  {
+    "service": {
+      "serviceDefinition": "SetRegisters",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": { }
+    },
+    "consumer": {
+      "systemName": "slave",
+      "address": "10.12.90.10",
+      "port": 8081,
+      "authenticationInfo": "null"
+    },
+    "providerSystem": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "priority": 1,
+    "defaultEntry": false,
+    "attributes": { }
+  },
+
+  {
+    "service": {
+      "serviceDefinition": "SetRegistersAtCertainAddress",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": { }
+    },
+    "consumer": {
+      "systemName": "slave",
+      "address": "10.12.90.10",
+      "port": 8081,
+      "authenticationInfo": "null"
+    },
+    "providerSystem": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "priority": 1,
+    "defaultEntry": false,
+    "attributes": { }
+  }
+]
