@@ -70,7 +70,7 @@ public class SlaveTCP {
 	private void setTCPConnection() throws UnknownHostException{
 	    tcpParameters.setHost(InetAddress.getLocalHost());
 	    tcpParameters.setKeepAlive(true);
-	    tcpParameters.setPort(502);
+	    tcpParameters.setPort(503);
 	}
 
 	private void setDataHolder() throws IllegalDataAddressException, IllegalDataValueException{
@@ -79,15 +79,16 @@ public class SlaveTCP {
 			public void onReadMultipleCoils(int address, int quantity) {
 				// System.out.print("onReadMultipleCoils: address " + address + ", quantity " + quantity + "\n");
 				HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
-				if(ModbusData.isExist())
+				if(ModbusData.isExist()){
 					valuesMap = ModbusData.getEntry().getCoilsInput();
-				for(int index = 0; index < quantity; index++){
-					int offsetIndex = address + index;
-					try {
-						hc.set(offsetIndex, valuesMap.get(offsetIndex));
-					} catch (IllegalDataAddressException
-							| IllegalDataValueException e) {
-						e.printStackTrace();
+					for(int index = 0; index < quantity; index++){
+						int offsetIndex = address + index;
+						try {
+							hc.set(offsetIndex, valuesMap.get(offsetIndex));
+						} catch (IllegalDataAddressException
+								| IllegalDataValueException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}

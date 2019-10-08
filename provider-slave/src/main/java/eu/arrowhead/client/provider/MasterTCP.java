@@ -2,7 +2,6 @@ package eu.arrowhead.client.provider;
 
 import java.net.InetAddress;
 import java.util.HashMap;
-
 import java.util.Map;
 
 import com.intelligt.modbus.jlibmodbus.Modbus;
@@ -13,10 +12,14 @@ import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMasterFactory;
 import com.intelligt.modbus.jlibmodbus.tcp.TcpParameters;
 
+import eu.arrowhead.client.Modbus_GUI.ModbusDataDisplay;
+import eu.arrowhead.client.Modbus_GUI.ModbusGUI;
+
 public class MasterTCP {
 	private TcpParameters tcpParameters = new TcpParameters();
 	private ModbusMaster master;
 	private int slaveId = 1;
+	private ModbusGUI frame = new ModbusDataDisplay();
 	
 	
   	public HashMap<Integer, Boolean> readMasterCoils(int offset, int quantity){
@@ -173,8 +176,10 @@ public class MasterTCP {
 				System.out.println("cannot connected with " + address);
 				e.printStackTrace();
 			}
-        if (master.isConnected())
+        if (master.isConnected()){
         	System.out.println("connected with " + address);
+        	frame.setCommunicationData("modbus", true);
+        }
 	}
 	
 	

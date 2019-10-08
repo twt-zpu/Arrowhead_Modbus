@@ -4,10 +4,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import eu.arrowhead.client.Modbus_GUI.ModbusDataDisplay;
+import eu.arrowhead.client.Modbus_GUI.ModbusGUI;
+
 public class App {
 	private static SlaveTCP slave;
+	private static ModbusGUI frame = new ModbusDataDisplay();
 	
 	public static void main(String[] args) {
+		frame.init("Arrowhead Modbus Communication Data - Consumer");
+		frame.setVisible(true);
+		
 		slave = new SlaveTCP(args);
 		Thread thread = new Thread(new Runnable(){
 			public void run(){

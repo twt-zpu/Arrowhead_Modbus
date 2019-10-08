@@ -16,6 +16,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 
+import eu.arrowhead.client.Modbus_GUI.ModbusDataDisplay;
+import eu.arrowhead.client.Modbus_GUI.ModbusGUI;
 import eu.arrowhead.client.common.model.ModbusMeasurement;
 import eu.arrowhead.client.common.model.ModbusMeasurementEntry;
 
@@ -28,11 +30,13 @@ public class Resource {
 	private String providerName = "master";
 	private static MasterTCP master = new MasterTCP();
 	private ModbusData modbusData;
-
+	private ModbusGUI frame = new ModbusDataDisplay();
+	
 	@GET
 	@Path("modbus/SetSlaveAddress/{slave_address}")
 	public Response setServerAddress(@Context SecurityContext context, @QueryParam("token") String token, 
 			@QueryParam("signature") String signature, @PathParam("slave_address") String address) {
+		frame.setCommunicationData("client", true);
 		master.setModbusMaster(address);
 		System.out.println("set slave adress");
 	    return Response.status(Status.OK).build();
@@ -51,6 +55,7 @@ public class Resource {
 	    entry.setCoilsInput(coilsInput);
 	    entryList.add(entry);
 	    measurement.setE(entryList);
+	    frame.setSensorData(coilsInput);
 	    modbusData.setExistence(true);
 	    modbusData.getEntry().setCoilsInput(coilsInput);
 	    return Response.status(Status.OK).entity(measurement).build();
@@ -85,6 +90,7 @@ public class Resource {
 			boolean value = Boolean.valueOf(coil_key_value[1]);
 			coilsMap.put(key, value);
 		}
+		frame.setAcutuatorData(coilsMap);
 		master.writeMasterCoils(coilsMap);
 	    modbusData.getEntry().setCoilsInput(coilsMap);
 	    return Response.status(Status.OK).entity(measurement).build();
@@ -98,8 +104,10 @@ public class Resource {
 		ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
 		String[] valuesString = values.split("-");
 		boolean[] valuesBoolean = new boolean[valuesString.length];
+		HashMap<Integer, Boolean> coilsMap = new HashMap<Integer, Boolean>();
 		for (int idx = 0; idx < valuesString.length; idx++){
 			valuesBoolean[idx] = Boolean.valueOf(valuesString[idx]);
+			coilsMap.put(offset + idx, valuesBoolean[idx]);
 		}
 		master.writeMasterCoilsAtID(offset, valuesBoolean);
 		modbusData.getEntry().setCoilsInput(offset, valuesBoolean);

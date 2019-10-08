@@ -1,13 +1,19 @@
 package eu.arrowhead.client.provider;
 
+import eu.arrowhead.client.Modbus_GUI.ModbusDataDisplay;
+import eu.arrowhead.client.Modbus_GUI.ModbusGUI;
+
 public class App {
 	private static Provider provider;
 	private static SlaveTCP slave;
+	private static ModbusGUI frame = new ModbusDataDisplay();
 	
 	public static void main(String[] args){
 		provider = new Provider(args);
 		slave = new SlaveTCP();
-		// start provider
+		
+		frame.init("Arrowhead Modbus Communication Data - Provider");
+		frame.setVisible(true);
 		new ProviderThread().start();
 		new SlaveThread().start();
 	}
