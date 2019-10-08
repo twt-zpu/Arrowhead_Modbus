@@ -99,14 +99,14 @@ public class Resource {
 	@Path("modbus/SetRegisters")
 	public Response SetRegisters(@QueryParam("coil") List<String> coilsList) {
 		ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
-		HashMap<Integer, Boolean> coilsMap = new HashMap<Integer, Boolean>();
+		HashMap<Integer, Integer> registersMap = new HashMap<Integer, Integer>();
 		for (String coil : coilsList){
 			String[] coil_key_value = coil.split("-");
 			int key = Integer.valueOf(coil_key_value[0]);
-			boolean value = Boolean.valueOf(coil_key_value[1]);
-			coilsMap.put(key, value);
+			int value = Integer.valueOf(coil_key_value[1]);
+			registersMap.put(key, value);
 		}
-		master.writeMasterCoils(coilsMap);
+		master.writeMasterRegisters(registersMap);
 	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	
