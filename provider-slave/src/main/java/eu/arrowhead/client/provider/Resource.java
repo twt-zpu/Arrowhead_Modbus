@@ -3,6 +3,7 @@ package eu.arrowhead.client.provider;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -56,8 +57,11 @@ public class Resource {
 	    entryList.add(entry);
 	    measurement.setE(entryList);
 	    frame.setSensorData(coilsInput);
+	    HashMap<Integer, Boolean> coilsInputSlave = new HashMap<Integer, Boolean>();
+	    for (Map.Entry coilEntry : coilsInput.entrySet())
+	    	coilsInputSlave.put((Integer)((int)coilEntry.getKey() + 522), (Boolean) coilEntry.getValue());	
 	    modbusData.setExistence(true);
-	    modbusData.getEntry().setCoilsInput(coilsInput);
+	    modbusData.getEntry().setCoilsInput(coilsInputSlave);
 	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	

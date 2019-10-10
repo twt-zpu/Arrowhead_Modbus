@@ -75,14 +75,16 @@ public class SlaveTCP {
 
 	private void setDataHolder() throws IllegalDataAddressException, IllegalDataValueException{
 		dh.addEventListener(new ModbusEventListener() {
-            @Override
+            @SuppressWarnings("static-access")
+			@Override
 			public void onReadMultipleCoils(int address, int quantity) {
 				// System.out.print("onReadMultipleCoils: address " + address + ", quantity " + quantity + "\n");
 				HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
-				if(ModbusData.isExist()){
-					valuesMap = ModbusData.getEntry().getCoilsInput();
+				if(modbusData.isExist()){
+					valuesMap = modbusData.getEntry().getCoilsInput();
 					for(int index = 0; index < quantity; index++){
 						int offsetIndex = address + index;
+						System.out.print("value: " + offsetIndex + ", " + valuesMap.get(offsetIndex));
 						try {
 							hc.set(offsetIndex, valuesMap.get(offsetIndex));
 						} catch (IllegalDataAddressException
@@ -117,6 +119,7 @@ public class SlaveTCP {
             
             @Override
             public void onReadMultipleHoldingRegisters(int address, int quantity) {
+            	// System.out.print("onReadMultipleHoldingRegisters: address " + address + ", quantity " + quantity + "\n");
             	HashMap<Integer, Integer> valuesMap = new HashMap<Integer, Integer>();
             	if(ModbusData.isExist())
             		valuesMap = ModbusData.getEntry().getRegistersInput();
