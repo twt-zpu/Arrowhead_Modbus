@@ -31,7 +31,7 @@ public class SlaveTCP {
 	private ModbusSlave slave;
 	private TcpParameters tcpParameters = new TcpParameters();
 	private int range = Integer.valueOf(props.getProperty("coil_register_memory_range", "100"));;
-	private ModbusCoils hc = new ModbusCoils(range);
+	private ModbusCoils hc = new ModbusCoils(600);
 	private ModbusCoils hcd = new ModbusCoils(range);
 	private ModbusHoldingRegisters hr = new ModbusHoldingRegisters(range); 
 	private ModbusHoldingRegisters hri = new ModbusHoldingRegisters(range);
@@ -40,6 +40,7 @@ public class SlaveTCP {
 	public SlaveTCP(){
 		try {
 			setSlave();
+			System.out.println("range : " +range);
 		} catch (IllegalDataAddressException | IllegalDataValueException
 				| UnknownHostException e) {
 			e.printStackTrace();
@@ -80,17 +81,20 @@ public class SlaveTCP {
 			public void onReadMultipleCoils(int address, int quantity) {
 				// System.out.print("onReadMultipleCoils: address " + address + ", quantity " + quantity + "\n");
 				HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
-				if(modbusData.isExist()){
-					valuesMap = modbusData.getEntry().getCoilsInput();
-					for(int index = 0; index < quantity; index++){
-						int offsetIndex = address + index;
-						System.out.print("value: " + offsetIndex + ", " + valuesMap.get(offsetIndex));
-						try {
+				if(ModbusData.isExist())
+            		valuesMap = ModbusData.getEntry().getCoilsInput();
+				for(int index = 0; index < quantity; index++){
+					int offsetIndex = address + index;
+					try {
+						// System.out.print("value: (" + offsetIndex + ", " + valuesMap.get(offsetIndex) + "); ");
+						if (valuesMap.get(offsetIndex) == null)
+							hc.set(offsetIndex, Boolean.FALSE);
+						else
 							hc.set(offsetIndex, valuesMap.get(offsetIndex));
-						} catch (IllegalDataAddressException
-								| IllegalDataValueException e) {
-							e.printStackTrace();
-						}
+							
+					} catch (IllegalDataAddressException
+							| IllegalDataValueException e) {
+						e.printStackTrace();
 					}
 				}
 			}
@@ -104,7 +108,10 @@ public class SlaveTCP {
 				for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
 					try {
-						hcd.set(offsetIndex, valuesMap.get(offsetIndex));
+						if (valuesMap.get(offsetIndex) == null)
+							hcd.set(offsetIndex, Boolean.FALSE);
+						else
+							hcd.set(offsetIndex, valuesMap.get(offsetIndex));
 					} catch (IllegalDataAddressException
 							| IllegalDataValueException e) {
 						e.printStackTrace();
@@ -126,7 +133,10 @@ public class SlaveTCP {
             	for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
 					try {
-						hr.set(offsetIndex, valuesMap.get(offsetIndex));
+						if (valuesMap.get(offsetIndex) == null)
+							hr.set(offsetIndex, 0);
+						else
+							hr.set(offsetIndex, valuesMap.get(offsetIndex));
 					} catch (IllegalDataAddressException
 							| IllegalDataValueException e) {
 						e.printStackTrace();
@@ -143,7 +153,10 @@ public class SlaveTCP {
 				for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
 					try {
-						hri.set(offsetIndex, valuesMap.get(offsetIndex));
+						if (valuesMap.get(offsetIndex) == null)
+							hri.set(offsetIndex, 0);
+						else
+							hri.set(offsetIndex, valuesMap.get(offsetIndex));
 					} catch (IllegalDataAddressException
 							| IllegalDataValueException e) {
 						e.printStackTrace();
