@@ -31,7 +31,23 @@
         }
       },
       {
-        "serviceDefinition": "GetRegisters",
+        "serviceDefinition": "GetDiscreteInputs",
+        "interfaces": [
+          "JSON"
+        ],
+        "serviceMetadata": {
+        }
+      },
+      {
+        "serviceDefinition": "GetHoldingRegisters",
+        "interfaces": [
+          "JSON"
+        ],
+        "serviceMetadata": {
+        }
+      },
+      {
+        "serviceDefinition": "GetInputRegisters",
         "interfaces": [
           "JSON"
         ],
@@ -55,7 +71,7 @@
         }
       },
       {
-        "serviceDefinition": "SetRegisters",
+        "serviceDefinition": "SetHoldingRegisters",
         "interfaces": [
           "JSON"
         ],
@@ -63,7 +79,7 @@
         }
       },
       {
-        "serviceDefinition": "SetRegistersAtCertainAddress",
+        "serviceDefinition": "SetHoldingRegistersAtCertainAddress",
         "interfaces": [
           "JSON"
         ],

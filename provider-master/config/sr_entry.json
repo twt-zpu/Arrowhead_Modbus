@@ -17,7 +17,7 @@
     "udp": false,
     "endOfValidity": "2020-01-01T00:00:00.000",
     "version": 1
-  }, 
+  },
 
   {
     "providedService": {
@@ -41,7 +41,7 @@
 
   {
     "providedService": {
-      "serviceDefinition": "GetRegisters",
+      "serviceDefinition": "GetDiscreteInputs",
       "interfaces": [
         "JSON"
       ],
@@ -53,7 +53,47 @@
       "address": "0.0.0.0",
       "port": 8460
     },
-    "serviceUri": "modbus/GetRegisters/{offset}/{quantity}",
+    "serviceUri": "modbus/GetDiscreteInputs/{offset}/{quantity}",
+    "udp": false,
+    "endOfValidity": "2020-01-01T00:00:00.000",
+    "version": 1
+  },
+
+  {
+    "providedService": {
+      "serviceDefinition": "GetHoldingRegisters",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": {
+      }
+    },
+    "provider": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "serviceUri": "modbus/GetHoldingRegisters/{offset}/{quantity}",
+    "udp": false,
+    "endOfValidity": "2020-01-01T00:00:00.000",
+    "version": 1
+  },
+
+  {
+    "providedService": {
+      "serviceDefinition": "GetInputRegisters",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": {
+      }
+    },
+    "provider": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "serviceUri": "modbus/GetInputRegisters/{offset}/{quantity}",
     "udp": false,
     "endOfValidity": "2020-01-01T00:00:00.000",
     "version": 1
@@ -101,7 +141,7 @@
 
   {
     "providedService": {
-      "serviceDefinition": "SetRegisters",
+      "serviceDefinition": "SetHoldingRegisters",
       "interfaces": [
         "JSON"
       ],
@@ -113,7 +153,7 @@
       "address": "0.0.0.0",
       "port": 8460
     },
-    "serviceUri": "modbus/SetRegisters",
+    "serviceUri": "modbus/SetHoldingRegisters",
     "udp": false,
     "endOfValidity": "2020-01-01T00:00:00.000",
     "version": 1
@@ -121,7 +161,7 @@
 
   {
     "providedService": {
-      "serviceDefinition": "SetRegistersAtCertainAddress",
+      "serviceDefinition": "SetHoldingRegistersAtCertainAddress",
       "interfaces": [
         "JSON"
       ],
@@ -133,7 +173,7 @@
       "address": "0.0.0.0",
       "port": 8460
     },
-    "serviceUri": "modbus/SetRegisters/{offset}/{values}",
+    "serviceUri": "modbus/SetHoldingRegisters/{offset}/{values}",
     "udp": false,
     "endOfValidity": "2020-01-01T00:00:00.000",
     "version": 1

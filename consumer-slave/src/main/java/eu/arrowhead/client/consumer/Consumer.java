@@ -65,8 +65,22 @@ public class Consumer {
     	return consumeService(providerUrl);
     }
     
-    public ModbusMeasurementEntry getRegisters(int offset, int quantity){
-    	String method = "GetRegisters";
+    public ModbusMeasurementEntry getDiscreteInputs(int offset, int quantity){
+    	String method = "GetDiscreteInputs";
+    	ServiceRequestForm srf = compileSRF(method);
+    	String providerUrl = sendOrchestrationRequest(srf, method, offset, quantity);
+    	return consumeService(providerUrl);
+    }
+    
+    public ModbusMeasurementEntry getHoldingRegisters(int offset, int quantity){
+    	String method = "GetHoldingRegisters";
+    	ServiceRequestForm srf = compileSRF(method);
+    	String providerUrl = sendOrchestrationRequest(srf, method, offset, quantity);
+    	return consumeService(providerUrl);
+    }
+    
+    public ModbusMeasurementEntry getInputRegisters(int offset, int quantity){
+    	String method = "GetInputRegisters";
     	ServiceRequestForm srf = compileSRF(method);
     	String providerUrl = sendOrchestrationRequest(srf, method, offset, quantity);
     	return consumeService(providerUrl);
@@ -91,16 +105,16 @@ public class Consumer {
     	consumeService(providerUrl);
     }
     
-    public void setRegisters(HashMap<Integer, Integer> registersMap){
-    	String method = "SetRegisters";
+    public void setHoldingRegisters(HashMap<Integer, Integer> registersMap){
+    	String method = "SetHoldingRegisters";
     	this.registersMap = registersMap;
     	ServiceRequestForm srf = compileSRF(method);
     	String providerUrl = sendOrchestrationRequest(srf, method);
     	consumeService(providerUrl);
     }
     
-    public void setRegistersAtID(int offset, int[] values){
-    	String method = "SetRegistersAtCertainAddress";
+    public void setHoldingRegistersAtID(int offset, int[] values){
+    	String method = "SetHoldingRegistersAtCertainAddress";
     	if (values.length > 0)
     		this.registerOutputs = String.valueOf(values[0]);
     	for (int idx = 1; idx < values.length; idx++)

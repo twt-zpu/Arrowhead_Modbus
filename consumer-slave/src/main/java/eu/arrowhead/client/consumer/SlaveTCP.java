@@ -82,7 +82,7 @@ public class SlaveTCP {
 			public void onReadMultipleCoils(int address, int quantity) {
 				// System.out.print("onReadMultipleCoils: address " + address + ", quantity " + quantity + "\n");
 				HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
-				valuesMap = consumer.getCoils(address, quantity).getCoilsInput();
+				valuesMap = consumer.getCoils(address, quantity).getCoils();
 				for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
 					try {
@@ -98,7 +98,7 @@ public class SlaveTCP {
             public void onReadMultipeDiscreteInputs(int address, int quantity){
             	// System.out.print("onReadMultipeDiscreteInputs: address " + address + ", quantity " + quantity + "\n");
             	HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
-				valuesMap = consumer.getCoils(address, quantity).getCoilsInput();
+				valuesMap = consumer.getDiscreteInputs(address, quantity).getDiscreteInputs();
 				for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
 					try {
@@ -118,7 +118,7 @@ public class SlaveTCP {
             @Override
             public void onReadMultipleHoldingRegisters(int address, int quantity) {
             	HashMap<Integer, Integer> valuesMap = new HashMap<Integer, Integer>();
-            	valuesMap = consumer.getRegisters(address, quantity).getRegistersInput();
+            	valuesMap = consumer.getHoldingRegisters(address, quantity).getHoldingRegisters();
             	for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
 					try {
@@ -134,7 +134,7 @@ public class SlaveTCP {
             public void onReadMultipleInputRegisters(int address, int quantity){
             	// System.out.print("onReadMultipleInputRegisters: address " + address + ", quantity " + quantity + "\n");
             	HashMap<Integer, Integer> valuesMap = new HashMap<Integer, Integer>();
-				valuesMap = consumer.getCoils(address, quantity).getRegistersInput();
+				valuesMap = consumer.getInputRegisters(address, quantity).getInputRegisters();
 				for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
 					try {
@@ -163,13 +163,13 @@ public class SlaveTCP {
             public void onWriteToSingleHoldingRegister(int address, int value) {
                 // System.out.print("onWriteToSingleHoldingRegister: address " + address + ", value " + value + "\n");
             	int[] values = new int[]{value};
-				consumer.setRegistersAtID(address, values);
+				consumer.setHoldingRegistersAtID(address, values);
             }
 
             @Override
             public void onWriteToMultipleHoldingRegisters(int address, int quantity, int[] values) {
                 // System.out.print("onWriteToMultipleHoldingRegisters: address " + address + ", quantity " + quantity + "\n");
-            	consumer.setRegistersAtID(address, values);
+            	consumer.setHoldingRegistersAtID(address, values);
             }
         });
         slave.setDataHolder(dh);

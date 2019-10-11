@@ -49,7 +49,55 @@
 
   {
     "service": {
-      "serviceDefinition": "GetRegisters",
+      "serviceDefinition": "GetDiscreteInputs",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": { }
+    },
+    "consumer": {
+      "systemName": "slave",
+      "address": "10.12.90.10",
+      "port": 8081,
+      "authenticationInfo": "null"
+    },
+    "providerSystem": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "priority": 1,
+    "defaultEntry": false,
+    "attributes": { }
+  },
+
+  {
+    "service": {
+      "serviceDefinition": "GetHoldingRegisters",
+      "interfaces": [
+        "JSON"
+      ],
+      "serviceMetadata": {}
+    },
+    "consumer": {
+      "systemName": "slave",
+      "address": "10.12.90.10",
+      "port": 8081,
+      "authenticationInfo": "null"
+    },
+    "providerSystem": {
+      "systemName": "modbus",
+      "address": "0.0.0.0",
+      "port": 8460
+    },
+    "priority": 1,
+    "defaultEntry": false,
+    "attributes": { }
+  },
+
+  {
+    "service": {
+      "serviceDefinition": "GetInputRegisters",
       "interfaces": [
         "JSON"
       ],
@@ -121,7 +169,7 @@
 
   {
     "service": {
-      "serviceDefinition": "SetRegisters",
+      "serviceDefinition": "SetHoldingRegisters",
       "interfaces": [
         "JSON"
       ],
@@ -145,7 +193,7 @@
 
   {
     "service": {
-      "serviceDefinition": "SetRegistersAtCertainAddress",
+      "serviceDefinition": "SetHoldingRegistersAtCertainAddress",
       "interfaces": [
         "JSON"
       ],
