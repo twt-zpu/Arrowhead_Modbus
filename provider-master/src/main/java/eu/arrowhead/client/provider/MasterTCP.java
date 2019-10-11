@@ -19,7 +19,7 @@ public class MasterTCP {
 	private int slaveId = 1;
 	
 	
-  	public HashMap<Integer, Boolean> readMasterCoils(int offset, int quantity){
+  	public HashMap<Integer, Boolean> readCoils(int offset, int quantity){
 		HashMap<Integer, Boolean> coilsMap = new HashMap<Integer, Boolean>();
 		try{
 			if (!master.isConnected()){
@@ -46,7 +46,61 @@ public class MasterTCP {
 		return coilsMap;
 	}
   	
-  	public HashMap<Integer, Integer> readMasterRegisters(int offset, int quantity){
+	public HashMap<Integer, Boolean> readDiscreteInputs(int offset, int quantity){
+		HashMap<Integer, Boolean> coilsMap = new HashMap<Integer, Boolean>();
+		try{
+			if (!master.isConnected()){
+				master.connect();
+			}
+			boolean[] coilsArray = master.readDiscreteInputs(slaveId, offset, quantity);
+			for (int index = 0; index < quantity; index++){
+				int offsetIndex = offset + index;
+				coilsMap.put(offsetIndex, coilsArray[index]);
+			}
+		} catch (ModbusProtocolException e) {
+            e.printStackTrace();
+        } catch (ModbusNumberException e) {
+            e.printStackTrace();
+        } catch (ModbusIOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                master.disconnect();
+            } catch (ModbusIOException e) {
+                e.printStackTrace();
+            }
+        }
+		return coilsMap;
+	}
+  	
+  	public HashMap<Integer, Integer> readHoldingRegisters(int offset, int quantity){
+		HashMap<Integer, Integer> registersMap = new HashMap<Integer, Integer>();
+		try{
+			if (!master.isConnected()){
+				master.connect();
+			}
+			int[] registersArray = master.readHoldingRegisters(slaveId, offset, quantity);
+			for (int index = 0; index < quantity; index++){
+				int offsetIndex = offset + index;
+				registersMap.put(offsetIndex, registersArray[index]);
+			}
+		} catch (ModbusProtocolException e) {
+            e.printStackTrace();
+        } catch (ModbusNumberException e) {
+            e.printStackTrace();
+        } catch (ModbusIOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                master.disconnect();
+            } catch (ModbusIOException e) {
+                e.printStackTrace();
+            }
+        }
+		return registersMap;
+	}
+  	
+  	public HashMap<Integer, Integer> readInputRegisters(int offset, int quantity){
 		HashMap<Integer, Integer> registersMap = new HashMap<Integer, Integer>();
 		try{
 			if (!master.isConnected()){
@@ -73,7 +127,7 @@ public class MasterTCP {
 		return registersMap;
 	}
 	
-	public void writeMasterCoils(HashMap<Integer, Boolean> coilsMap){
+	public void writeCoils(HashMap<Integer, Boolean> coilsMap){
 		try {
 			if (!master.isConnected()){
 				master.connect();
@@ -94,7 +148,7 @@ public class MasterTCP {
 		}
 	}
 	
-	public void writeMasterCoilsAtID(int address, boolean[] coils){
+	public void writeCoilsAtID(int address, boolean[] coils){
 		try {
 			if (!master.isConnected()){
 				master.connect();
@@ -107,7 +161,7 @@ public class MasterTCP {
 		}
 	}
 	
-	public void writeMasterRegisters(HashMap<Integer, Integer> registersMap){
+	public void writeHoldingRegisters(HashMap<Integer, Integer> registersMap){
 		try {
 			if (!master.isConnected()){
 				master.connect();
@@ -131,7 +185,7 @@ public class MasterTCP {
 		}
 	}
 	
-	public void writeMasterRegistersAtID(int address, int[] registers){	
+	public void writeHoldingRegistersAtID(int address, int[] registers){	
 		try {
 			if (!master.isConnected()){
 				master.connect();

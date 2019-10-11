@@ -30,7 +30,6 @@ import eu.arrowhead.client.common.model.ModbusMeasurementEntry;
 public class Resource {
 	private String providerName = "master";
 	private static MasterTCP master = new MasterTCP();
-	private ModbusData modbusData;
 	private ModbusGUI frame = new ModbusDataDisplay();
 	
 	@GET
@@ -43,7 +42,7 @@ public class Resource {
 	    return Response.status(Status.OK).build();
 	}
 	
-	@SuppressWarnings("static-access")
+	@SuppressWarnings({ "rawtypes" })
 	@GET
 	@Path("modbus/GetCoils/{offset}/{quantity}")
 	public Response getCoils(@Context SecurityContext context, @QueryParam("token") String token, 
@@ -52,37 +51,65 @@ public class Resource {
 	    ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
 	    ModbusMeasurementEntry entry = new ModbusMeasurementEntry();
 	    List<ModbusMeasurementEntry> entryList = new ArrayList<>();
-	    HashMap<Integer, Boolean> coilsInput = master.readMasterCoils(offset, quantity);
-	    entry.setCoilsInput(coilsInput);
+	    HashMap<Integer, Boolean> coilsInput = master.readCoils(offset, quantity);
+	    entry.setCoils(coilsInput);
 	    entryList.add(entry);
 	    measurement.setE(entryList);
 	    frame.setSensorData(coilsInput);
 	    HashMap<Integer, Boolean> coilsInputSlave = new HashMap<Integer, Boolean>();
 	    for (Map.Entry coilEntry : coilsInput.entrySet())
 	    	coilsInputSlave.put((Integer)((int)coilEntry.getKey() + 522), (Boolean) coilEntry.getValue());	
-	    modbusData.setExistence(true);
-	    modbusData.getEntry().setCoilsInput(coilsInputSlave);
+	    ModbusData.entry.setCoils(coilsInputSlave);
 	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	
-	@SuppressWarnings("static-access")
 	@GET
-	@Path("modbus/GetRegisters/{offset}/{quantity}")
+	@Path("modbus/GetDiscreteInputs/{offset}/{quantity}")
+	public Response getDiscreteInputs(@Context SecurityContext context, @QueryParam("token") String token, 
+			@QueryParam("signature") String signature, @PathParam("offset") int offset, @PathParam("quantity") int quantity) {
+	    
+	    ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
+	    ModbusMeasurementEntry entry = new ModbusMeasurementEntry();
+	    List<ModbusMeasurementEntry> entryList = new ArrayList<>();
+	    HashMap<Integer, Boolean> discreteInputs = master.readDiscreteInputs(offset, quantity);
+	    entry.setDiscreteInputs(discreteInputs);
+	    entryList.add(entry);
+	    measurement.setE(entryList);
+	    ModbusData.entry.setCoils(discreteInputs);
+	    ModbusData.entry.setDiscreteInputs(discreteInputs);
+	    return Response.status(Status.OK).entity(measurement).build();
+	}
+	
+	@GET
+	@Path("modbus/GetHoldingRegisters/{offset}/{quantity}")
+	public Response getHoldingRegisters(@Context SecurityContext context, @QueryParam("token") String token, 
+			@QueryParam("signature") String signature, @PathParam("offset") int offset, @PathParam("quantity") int quantity) {
+	    ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
+	    ModbusMeasurementEntry entry = new ModbusMeasurementEntry();
+	    List<ModbusMeasurementEntry> entryList = new ArrayList<>();
+	    HashMap<Integer, Integer> registersInput = master.readHoldingRegisters(offset, quantity);
+	    entry.setHoldingRegisters(registersInput);
+	    entryList.add(entry);
+	    measurement.setE(entryList);
+	    ModbusData.entry.setHoldingRegisters(registersInput);
+	    return Response.status(Status.OK).entity(measurement).build();
+	}
+	
+	@GET
+	@Path("modbus/GetInputRegisters/{offset}/{quantity}")
 	public Response getRegisters(@Context SecurityContext context, @QueryParam("token") String token, 
 			@QueryParam("signature") String signature, @PathParam("offset") int offset, @PathParam("quantity") int quantity) {
 	    ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
 	    ModbusMeasurementEntry entry = new ModbusMeasurementEntry();
 	    List<ModbusMeasurementEntry> entryList = new ArrayList<>();
-	    HashMap<Integer, Integer> registersInput = master.readMasterRegisters(offset, quantity);
-	    entry.setRegistersInput(registersInput);
+	    HashMap<Integer, Integer> registersInput = master.readInputRegisters(offset, quantity);
+	    entry.setInputRegisters(registersInput);
 	    entryList.add(entry);
 	    measurement.setE(entryList);
-	    modbusData.setExistence(true);
-	    modbusData.getEntry().setRegistersInput(registersInput);
+	    ModbusData.entry.setInputRegisters(registersInput);
 	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	
-	@SuppressWarnings("static-access")
 	@GET
 	@Path("modbus/SetCoils")
 	public Response setCoils(@QueryParam("coil") List<String> coilsList) {
@@ -95,12 +122,11 @@ public class Resource {
 			coilsMap.put(key, value);
 		}
 		frame.setAcutuatorData(coilsMap);
-		master.writeMasterCoils(coilsMap);
-	    modbusData.getEntry().setCoilsInput(coilsMap);
+		master.writeCoils(coilsMap);
+	    ModbusData.entry.setCoils(coilsMap);
 	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	
-	@SuppressWarnings("static-access")
 	@GET
 	@Path("modbus/SetCoils/{offset}/{values}")
 	public Response setCoilsAtID(@Context SecurityContext context, @QueryParam("token") String token, 
@@ -114,14 +140,13 @@ public class Resource {
 			coilsMap.put(offset + idx, valuesBoolean[idx]);
 		}
 		frame.setAcutuatorData(coilsMap);
-		master.writeMasterCoilsAtID(offset, valuesBoolean);
-		modbusData.getEntry().setCoilsInput(offset, valuesBoolean);
+		master.writeCoilsAtID(offset, valuesBoolean);
+		ModbusData.entry.setCoils(offset, valuesBoolean);
 	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	
-	@SuppressWarnings("static-access")
 	@GET
-	@Path("modbus/SetRegisters")
+	@Path("modbus/SetHoldingRegisters")
 	public Response SetRegisters(@QueryParam("coil") List<String> coilsList) {
 		ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
 		HashMap<Integer, Integer> RegistersMap = new HashMap<Integer, Integer>();
@@ -131,14 +156,13 @@ public class Resource {
 			Integer value = Integer.valueOf(coil_key_value[1]);
 			RegistersMap.put(key, value);
 		}
-		master.writeMasterRegisters(RegistersMap);
-		modbusData.getEntry().setRegistersInput(RegistersMap);
+		master.writeHoldingRegisters(RegistersMap);
+		ModbusData.entry.setHoldingRegisters(RegistersMap);
 	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	
-	@SuppressWarnings("static-access")
 	@GET
-	@Path("modbus/SetRegisters/{offset}/{values}")
+	@Path("modbus/SetHoldingRegisters/{offset}/{values}")
 	public Response setRegistersAtID(@Context SecurityContext context, @QueryParam("token") String token, 
 			@QueryParam("signature") String signature, @PathParam("offset") int offset, @PathParam("values") String values) {
 		ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
@@ -147,8 +171,8 @@ public class Resource {
 		for (int idx = 0; idx < valuesString.length; idx++){
 			valuesInt[idx] = Integer.valueOf(valuesString[idx]);
 		}
-		master.writeMasterRegistersAtID(offset, valuesInt);
-		modbusData.getEntry().setRegistersInput(offset, valuesInt);
+		master.writeHoldingRegistersAtID(offset, valuesInt);
+		ModbusData.entry.setHoldingRegisters(offset, valuesInt);
 	    return Response.status(Status.OK).entity(measurement).build();
 	}
 }

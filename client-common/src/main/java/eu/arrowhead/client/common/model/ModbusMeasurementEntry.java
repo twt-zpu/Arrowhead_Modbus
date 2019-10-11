@@ -3,80 +3,80 @@ package eu.arrowhead.client.common.model;
 import java.util.HashMap;
 
 public class ModbusMeasurementEntry {
-	private HashMap<Integer, Boolean> coilsInput = new HashMap<Integer, Boolean>();
-	private HashMap<Integer, Boolean> coilsOutput = new HashMap<Integer, Boolean>();
-	private HashMap<Integer, Integer> registersInput = new HashMap<Integer, Integer>();
-	private HashMap<Integer, Integer> registersOutput = new HashMap<Integer, Integer>();
+	private final HashMap<Integer, Boolean> coils = new HashMap<Integer, Boolean>();
+	private final HashMap<Integer, Boolean> discreteInputs = new HashMap<Integer, Boolean>();
+	private final HashMap<Integer, Integer> holdingRegisters = new HashMap<Integer, Integer>();
+	private final HashMap<Integer, Integer> inputRegisters = new HashMap<Integer, Integer>();
 	
-	public void setCoilInput(int address, boolean value){
-		coilsInput.put(address, value);
+	public void setCoil(int address, boolean value){
+		coils.put(address, value);
 	}
 	
-	public void setCoilsInput(int address, boolean[] values){
+	public void setCoils(int address, boolean[] values){
 		int index = address;
 		for(boolean value : values)
-			coilsInput.put(index++, value);
+			coils.put(index++, value);
 	}
 	
-	public void setCoilsInput(HashMap<Integer, Boolean> coilsInput){
-		this.coilsInput = coilsInput;
+	public void setCoils(HashMap<Integer, Boolean> coils){
+		this.coils.putAll(coils);
 	}
 	
-	public HashMap<Integer, Boolean> getCoilsInput(){
-		return coilsInput;
+	public HashMap<Integer, Boolean> getCoils(){
+		return coils;
 	}
 	
-	public void setCoilOutput(int address, boolean value){
-		coilsOutput.put(address, value);
+	public void setDiscreteInput(int address, boolean value){
+		discreteInputs.put(address, value);
 	}
 	
-	public void setCoilsOutput(int address, boolean[] values){
+	public void setDiscreteInputs(int address, boolean[] values){
 		int index = address;
 		for(boolean value : values)
-			coilsOutput.put(index++, value);
+			discreteInputs.put(index++, value);
 	}
 	
-	public void setCoilsOutput(HashMap<Integer, Boolean> coilsOutput){
-		this.coilsOutput = coilsOutput;
+	public void setDiscreteInputs(HashMap<Integer, Boolean> discreteInputs){
+		this.discreteInputs.putAll(discreteInputs);
 	}
 	
-	public HashMap<Integer, Boolean> getCoilsOutput(){
-		return coilsOutput;
+	public HashMap<Integer, Boolean> getDiscreteInputs(){
+		return discreteInputs;
 	}
 	
-	public void setRegisterInput(int address, int value){
-		registersInput.put(address, value);
+	public void setHoldingRegister(int address, int value){
+		holdingRegisters.put(address, value);
 	}
 	
-	public void setRegistersInput(int address, int[] values){
+	public void setHoldingRegisters(int address, int[] values){
 		int index = address;
 		for(int value : values)
-			registersInput.put(index++, value);
+			holdingRegisters.put(index++, value);
 	}
 	
-	public void setRegistersInput(HashMap<Integer, Integer> registersInput){
-		this.registersInput = registersInput;
+	public void setHoldingRegisters(HashMap<Integer, Integer> holdingRegisters){
+		this.holdingRegisters.putAll(holdingRegisters);
 	}
 	
-	public HashMap<Integer, Integer> getRegistersInput(){
-		return registersInput;
+	public HashMap<Integer, Integer> getHoldingRegisters(){
+		return holdingRegisters;
 	}
 	
-	public void setRegisterOutput(int address, int value){
-		registersOutput.put(address, value);
+	public void setInputRegister(int address, int value){
+		inputRegisters.put(address, value);
 	}
 	
-	public void setRegistersOutput(int address, int[] values){
+	public void setInputRegisters(int address, int[] values){
 		int index = address;
 		for(int value : values)
-			registersOutput.put(index++, value);
+			inputRegisters.put(index++, value);
 	}
 	
-	public HashMap<Integer, Integer> getRegistersOutput(){
-		return registersOutput;
+	public void setInputRegisters(HashMap<Integer, Integer> inputRegisters){
+		this.inputRegisters.putAll(inputRegisters);
 	}
 	
-	public void setRegistersOutput(HashMap<Integer, Integer> registersOutput){
-		this.registersOutput = registersOutput;
+	public HashMap<Integer, Integer> getInputRegisters(){
+		return inputRegisters;
 	}
 }

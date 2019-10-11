@@ -27,7 +27,6 @@ import eu.arrowhead.client.common.misc.TypeSafeProperties;
 
 public class SlaveTCP {
 	private TypeSafeProperties props = Utility.getProp();
-	private ModbusData modbusData;
 	private ModbusSlave slave;
 	private TcpParameters tcpParameters = new TcpParameters();
 	private int range = Integer.valueOf(props.getProperty("coil_register_memory_range", "100"));;
@@ -76,13 +75,11 @@ public class SlaveTCP {
 
 	private void setDataHolder() throws IllegalDataAddressException, IllegalDataValueException{
 		dh.addEventListener(new ModbusEventListener() {
-            @SuppressWarnings("static-access")
 			@Override
 			public void onReadMultipleCoils(int address, int quantity) {
 				// System.out.print("onReadMultipleCoils: address " + address + ", quantity " + quantity + "\n");
 				HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
-				if(ModbusData.isExist())
-            		valuesMap = ModbusData.getEntry().getCoilsInput();
+            	valuesMap = ModbusData.entry.getCoils();
 				for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
 					try {
@@ -103,8 +100,7 @@ public class SlaveTCP {
             public void onReadMultipeDiscreteInputs(int address, int quantity){
             	// System.out.print("onReadMultipeDiscreteInputs: address " + address + ", quantity " + quantity + "\n");
             	HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
-            	if(ModbusData.isExist())
-            		valuesMap = ModbusData.getEntry().getCoilsInput();
+            	valuesMap = ModbusData.entry.getDiscreteInputs();
 				for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
 					try {
@@ -128,8 +124,7 @@ public class SlaveTCP {
             public void onReadMultipleHoldingRegisters(int address, int quantity) {
             	// System.out.print("onReadMultipleHoldingRegisters: address " + address + ", quantity " + quantity + "\n");
             	HashMap<Integer, Integer> valuesMap = new HashMap<Integer, Integer>();
-            	if(ModbusData.isExist())
-            		valuesMap = ModbusData.getEntry().getRegistersInput();
+            	valuesMap = ModbusData.entry.getHoldingRegisters();
             	for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
 					try {
@@ -148,8 +143,7 @@ public class SlaveTCP {
             public void onReadMultipleInputRegisters(int address, int quantity){
             	// System.out.print("onReadMultipleInputRegisters: address " + address + ", quantity " + quantity + "\n");
             	HashMap<Integer, Integer> valuesMap = new HashMap<Integer, Integer>();
-            	if(ModbusData.isExist())
-            		valuesMap = ModbusData.getEntry().getRegistersInput();
+            	valuesMap = ModbusData.entry.getInputRegisters();
 				for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
 					try {
@@ -168,26 +162,26 @@ public class SlaveTCP {
             public void onWriteToSingleCoil(int address, boolean value) {
 				// System.out.print("onWriteToSingleCoil: address " + address + ", value " + value + "\n");
 				boolean[] values = new boolean[]{value};
-				ModbusData.getEntry().setCoilsOutput(address, values);
+				ModbusData.entry.setCoils(address, values);
             }
             
             @Override
             public void onWriteToMultipleCoils(int address, int quantity, boolean[] values) {
                 // System.out.print("onWriteToMultipleCoils: address " + address + ", quantity " + quantity + "\n");
-            	ModbusData.getEntry().setCoilsOutput(address, values);
+            	ModbusData.entry.setCoils(address, values);
             }
 
             @Override
             public void onWriteToSingleHoldingRegister(int address, int value) {
                 // System.out.print("onWriteToSingleHoldingRegister: address " + address + ", value " + value + "\n");
             	int[] values = new int[]{value};
-            	ModbusData.getEntry().setRegistersOutput(address, values);
+            	ModbusData.entry.setHoldingRegisters(address, values);
             }
 
             @Override
             public void onWriteToMultipleHoldingRegisters(int address, int quantity, int[] values) {
                 // System.out.print("onWriteToMultipleHoldingRegisters: address " + address + ", quantity " + quantity + "\n");
-            	ModbusData.getEntry().setRegistersOutput(address, values);
+            	ModbusData.entry.setHoldingRegisters(address, values);
             }
         });
         slave.setDataHolder(dh);
