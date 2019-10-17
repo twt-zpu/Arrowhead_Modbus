@@ -33,7 +33,7 @@ public class Resource {
 	public Response setServerAddress(@Context SecurityContext context, @QueryParam("token") String token, 
 			@QueryParam("signature") String signature, @PathParam("slave_address") String address) {
 		master.setModbusMaster(address);
-		System.out.println("set slave adress");
+		System.out.println("set slave adress: " + address);
 	    return Response.status(Status.OK).build();
 	}
 	

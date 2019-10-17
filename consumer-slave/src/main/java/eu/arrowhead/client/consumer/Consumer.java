@@ -219,11 +219,13 @@ public class Consumer {
         switch(method) {
         case "SetSlaveAddress": setUri_SetSlaveAddress(ub, serviceURI); break;
         case "GetCoils": setUri_GetCoils(ub, serviceURI, offset, quantity); break;
-        case "GetRegisters": setUri_GetRegisters(ub, serviceURI, offset, quantity); break;
+        case "GetDiscreteInputs": setUri_GetDiscreteInputs(ub, serviceURI, offset, quantity); break;
+        case "GetHoldingRegisters": setUri_GetHoldingRegisters(ub, serviceURI, offset, quantity); break;
+        case "GetInputRegisters": setUri_GetInputRegisters(ub, serviceURI, offset, quantity); break;
         case "SetCoils": setUri_SetCoils(ub, serviceURI); break;
         case "SetCoilsAtCertainAddress": setUri_SetCoilsAtCertainAddress(ub, serviceURI, offset); break;
-        case "SetRegisters": setUri_SetRegisters(ub, serviceURI); break;
-        case "SetRegistersAtCertainAddress": setUri_SetRegistersAtCertainAddress(ub, serviceURI, offset); break;
+        case "SetHoldingRegisters": setUri_SetHoldingRegisters(ub, serviceURI); break;
+        case "SetHoldingRegistersAtCertainAddress": setUri_SetHoldingRegistersAtCertainAddress(ub, serviceURI, offset); break;
         default: setUri_rest(ub, serviceURI); break;
         }
         
@@ -252,7 +254,25 @@ public class Consumer {
             ub.path(serviceURI);
     }
     
-    private void setUri_GetRegisters(UriBuilder ub, String serviceURI, int offset, int quantity){
+    private void setUri_GetDiscreteInputs(UriBuilder ub, String serviceURI, int offset, int quantity){
+    	if (offset >= 0)
+    		serviceURI = serviceURI.replace("{offset}", String.valueOf(offset));
+    	if (quantity > 0)
+    		serviceURI = serviceURI.replace("{quantity}", String.valueOf(quantity));
+    	if (serviceURI != null)
+            ub.path(serviceURI);
+    }
+    
+    private void setUri_GetHoldingRegisters(UriBuilder ub, String serviceURI, int offset, int quantity){
+    	if (offset >= 0)
+    		serviceURI = serviceURI.replace("{offset}", String.valueOf(offset));
+    	if (quantity > 0)
+    		serviceURI = serviceURI.replace("{quantity}", String.valueOf(quantity));
+    	if (serviceURI != null)
+            ub.path(serviceURI);
+    }
+    
+    private void setUri_GetInputRegisters(UriBuilder ub, String serviceURI, int offset, int quantity){
     	if (offset >= 0)
     		serviceURI = serviceURI.replace("{offset}", String.valueOf(offset));
     	if (quantity > 0)
@@ -281,7 +301,7 @@ public class Consumer {
             ub.path(serviceURI);
     }
     
-    private void setUri_SetRegisters(UriBuilder ub, String serviceURI){
+    private void setUri_SetHoldingRegisters(UriBuilder ub, String serviceURI){
     	if (serviceURI != null)
             ub.path(serviceURI);
     	for (Map.Entry<Integer, Integer> entry : registersMap.entrySet()){
@@ -292,7 +312,7 @@ public class Consumer {
     	}
     }
     
-    private void setUri_SetRegistersAtCertainAddress(UriBuilder ub, String serviceURI, int offset){
+    private void setUri_SetHoldingRegistersAtCertainAddress(UriBuilder ub, String serviceURI, int offset){
     	if (offset >= 0)
     		serviceURI = serviceURI.replace("{offset}", String.valueOf(offset));
     	if (registerOutputs != null)
