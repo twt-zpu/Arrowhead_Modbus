@@ -38,7 +38,7 @@ public class Resource {
 			@QueryParam("signature") String signature, @PathParam("slave_address") String address) {
 		frame.setCommunicationData("client", true);
 		master.setModbusMaster(address);
-		System.out.println("set slave adress");
+		System.out.println("set slave adress: " + address);
 	    return Response.status(Status.OK).build();
 	}
 	
