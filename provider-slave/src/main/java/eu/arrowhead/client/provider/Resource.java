@@ -63,6 +63,7 @@ public class Resource {
 	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@GET
 	@Path("modbus/GetDiscreteInputs/{offset}/{quantity}")
 	public Response getDiscreteInputs(@Context SecurityContext context, @QueryParam("token") String token, 
@@ -75,7 +76,10 @@ public class Resource {
 	    entry.setDiscreteInputs(discreteInputs);
 	    entryList.add(entry);
 	    measurement.setE(entryList);
-	    ModbusData.entry.setCoils(discreteInputs);
+	    HashMap<Integer, Boolean> DiscreteInputsSlave = new HashMap<Integer, Boolean>();
+	    for (Map.Entry coilEntry : discreteInputs.entrySet())
+	    	DiscreteInputsSlave.put((Integer)((int)coilEntry.getKey() + 522), (Boolean) coilEntry.getValue());
+	    ModbusData.entry.setCoils(DiscreteInputsSlave);
 	    ModbusData.entry.setDiscreteInputs(discreteInputs);
 	    return Response.status(Status.OK).entity(measurement).build();
 	}
