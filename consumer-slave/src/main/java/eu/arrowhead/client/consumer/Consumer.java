@@ -15,11 +15,14 @@ import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
 import org.glassfish.grizzly.ssl.SSLContextConfigurator;
 import org.glassfish.grizzly.ssl.SSLContextConfigurator.GenericStoreException;
 
+import eu.arrowhead.client.Modbus_GUI.ModbusDataDisplay;
+import eu.arrowhead.client.Modbus_GUI.ModbusGUI;
 import eu.arrowhead.client.common.CertificateBootstrapper;
 import eu.arrowhead.client.common.Utility;
 import eu.arrowhead.client.common.exception.ArrowheadException;
@@ -44,6 +47,7 @@ public class Consumer {
     private final String consumerSystemName = props.getProperty("consumer_system_name");
     private final String consumerSystemAddress = props.getProperty("consumer_system_address", "0.0.0.0");
     private final Integer consumerSystemPort = Integer.valueOf(props.getProperty("consumer_system_port", "8080"));
+    private ModbusGUI frame = new ModbusDataDisplay();
     
     public Consumer(String[] args) {
         System.out.println("Working directory: " + System.getProperty("user.dir"));
@@ -55,7 +59,16 @@ public class Consumer {
     	this.slaveAddress = slaveAddress;
     	ServiceRequestForm srf = compileSRF(method);
     	String providerUrl = sendOrchestrationRequest(srf, method);
-    	Utility.sendRequest(providerUrl, "GET", null);
+    	
+    	frame.setCommunicationData("server", true);
+    	
+    	Response response = Utility.sendRequest(providerUrl, "GET", null);
+    	
+    	if (response.getStatusInfo() == Status.OK )
+    		frame.setCommunicationData("client", true);
+    	else
+    		frame.setCommunicationData("client", false);
+    	
     }
     
     public ModbusMeasurementEntry getCoils(int offset, int quantity){

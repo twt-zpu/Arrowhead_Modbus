@@ -12,6 +12,8 @@ import java.util.Set;
 
 import javax.ws.rs.core.UriBuilder;
 
+import eu.arrowhead.client.Modbus_GUI.ModbusDataDisplay;
+import eu.arrowhead.client.Modbus_GUI.ModbusGUI;
 import eu.arrowhead.client.common.ArrowheadClientMain;
 import eu.arrowhead.client.common.Utility;
 import eu.arrowhead.client.common.exception.ArrowheadException;
@@ -30,6 +32,7 @@ public class Provider extends ArrowheadClientMain {
 	private boolean NEED_AUTH = false;
 	private boolean NEED_ORCH = false;
 	private String SR_BASE_URI;
+	private ModbusGUI frame = new ModbusDataDisplay();
 
 	//JSON payloads
 	private List<ServiceRegistryEntry> srEntries = new ArrayList<>();
@@ -60,6 +63,8 @@ public class Provider extends ArrowheadClientMain {
 			args[idx] = argsList.get(idx);
 		}
 		init(ClientType.PROVIDER, args, classes, packages);
+		frame.init("Arrowhead Client Provider");
+		frame.setVisible(true);
 		//Compile the base of the Service Registry URL
 		getServiceRegistryUrl();
 		//Compile the request payload

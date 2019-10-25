@@ -22,6 +22,8 @@ import com.intelligt.modbus.jlibmodbus.utils.FrameEventListener;
 import com.intelligt.modbus.jlibmodbus.utils.ModbusSlaveTcpObserver;
 import com.intelligt.modbus.jlibmodbus.utils.TcpClientInfo;
 
+import eu.arrowhead.client.Modbus_GUI.ModbusDataDisplay;
+import eu.arrowhead.client.Modbus_GUI.ModbusGUI;
 import eu.arrowhead.client.common.Utility;
 import eu.arrowhead.client.common.misc.TypeSafeProperties;
 
@@ -36,11 +38,16 @@ public class SlaveTCP {
 	private ModbusHoldingRegisters hr = new ModbusHoldingRegisters(range); 
 	private ModbusHoldingRegisters hri = new ModbusHoldingRegisters(range);
 	private MyOwnDataHolder dh = new MyOwnDataHolder();
+	private ModbusGUI frame = new ModbusDataDisplay();
 	
 	public SlaveTCP(String[] args){
 		this.consumer = new Consumer(args);
 		String address = props.getProperty("remote_io_address", "10.12.90.14");
 		consumer.setServerAddress(address);
+		
+		frame.init("Arrowhead Client Consumer");
+		frame.setVisible(true);
+		
 		try {
 			setSlave();
 		} catch (IllegalDataAddressException | IllegalDataValueException
@@ -83,6 +90,7 @@ public class SlaveTCP {
 				// System.out.print("onReadMultipleCoils: address " + address + ", quantity " + quantity + "\n");
 				HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
 				valuesMap = consumer.getCoils(address, quantity).getCoils();
+				frame.setSensorData(valuesMap);
 				for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
 					try {
@@ -99,6 +107,7 @@ public class SlaveTCP {
             	// System.out.print("onReadMultipeDiscreteInputs: address " + address + ", quantity " + quantity + "\n");
             	HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
 				valuesMap = consumer.getDiscreteInputs(address, quantity).getDiscreteInputs();
+				frame.setSensorData(valuesMap);
 				for(int index = 0; index < quantity; index++){
 					int offsetIndex = address + index;
 					try {
@@ -150,12 +159,20 @@ public class SlaveTCP {
             public void onWriteToSingleCoil(int address, boolean value) {
 				// System.out.print("onWriteToSingleCoil: address " + address + ", value " + value + "\n");
 				boolean[] values = new boolean[]{value};
+				HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
+				valuesMap.put(address, value);
+				frame.setAcutuatorData(valuesMap);
 				consumer.setCoilsAtID(address, values);
             }
             
             @Override
             public void onWriteToMultipleCoils(int address, int quantity, boolean[] values) {
                 // System.out.print("onWriteToMultipleCoils: address " + address + ", quantity " + quantity + "\n");
+            	HashMap<Integer, Boolean> valuesMap = new HashMap<Integer, Boolean>();
+            	for (int idx = 0; idx < quantity; idx++){
+            		valuesMap.put(address+idx, values[idx]);
+            	}
+				frame.setAcutuatorData(valuesMap);
             	consumer.setCoilsAtID(address, values);
             }
 
@@ -198,11 +215,13 @@ public class SlaveTCP {
 		Observer o = new ModbusSlaveTcpObserver() {
             @Override
             public void clientAccepted(TcpClientInfo info) {
+            	frame.setCommunicationData("modbus", true);
                 System.out.println("Client connected " + info.getTcpParameters().getHost());
             }
 
             @Override
             public void clientDisconnected(TcpClientInfo info) {
+            	frame.setCommunicationData("modbus", false);
                 System.out.println("Client disconnected " + info.getTcpParameters().getHost());
             }
         };

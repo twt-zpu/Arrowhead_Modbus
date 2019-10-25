@@ -16,6 +16,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 
+import eu.arrowhead.client.Modbus_GUI.ModbusDataDisplay;
+import eu.arrowhead.client.Modbus_GUI.ModbusGUI;
 import eu.arrowhead.client.common.model.ModbusMeasurement;
 import eu.arrowhead.client.common.model.ModbusMeasurementEntry;
 
@@ -27,11 +29,14 @@ import eu.arrowhead.client.common.model.ModbusMeasurementEntry;
 public class Resource {
 	private String providerName = "master";
 	private static MasterTCP master = new MasterTCP();
+	private ModbusGUI frame = new ModbusDataDisplay();
 
 	@GET
 	@Path("modbus/SetSlaveAddress/{slave_address}")
 	public Response setServerAddress(@Context SecurityContext context, @QueryParam("token") String token, 
 			@QueryParam("signature") String signature, @PathParam("slave_address") String address) {
+		frame.setCommunicationData("server", true);
+		frame.setCommunicationData("client", true);
 		master.setModbusMaster(address);
 		System.out.println("set slave adress: " + address);
 	    return Response.status(Status.OK).build();

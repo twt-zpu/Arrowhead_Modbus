@@ -2,7 +2,6 @@ package eu.arrowhead.client.provider;
 
 import java.net.InetAddress;
 import java.util.HashMap;
-
 import java.util.Map;
 
 import com.intelligt.modbus.jlibmodbus.Modbus;
@@ -13,11 +12,14 @@ import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMasterFactory;
 import com.intelligt.modbus.jlibmodbus.tcp.TcpParameters;
 
+import eu.arrowhead.client.Modbus_GUI.ModbusDataDisplay;
+import eu.arrowhead.client.Modbus_GUI.ModbusGUI;
+
 public class MasterTCP {
 	private TcpParameters tcpParameters = new TcpParameters();
 	private ModbusMaster master;
 	private int slaveId = 1;
-	
+	private ModbusGUI frame = new ModbusDataDisplay();
 	
   	public HashMap<Integer, Boolean> readCoils(int offset, int quantity){
 		HashMap<Integer, Boolean> coilsMap = new HashMap<Integer, Boolean>();
@@ -30,18 +32,13 @@ public class MasterTCP {
 				int offsetIndex = offset + index;
 				coilsMap.put(offsetIndex, coilsArray[index]);
 			}
+			frame.setSensorData(coilsMap);
 		} catch (ModbusProtocolException e) {
             e.printStackTrace();
         } catch (ModbusNumberException e) {
             e.printStackTrace();
         } catch (ModbusIOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                master.disconnect();
-            } catch (ModbusIOException e) {
-                e.printStackTrace();
-            }
         }
 		return coilsMap;
 	}
@@ -57,18 +54,13 @@ public class MasterTCP {
 				int offsetIndex = offset + index;
 				coilsMap.put(offsetIndex, coilsArray[index]);
 			}
+			frame.setSensorData(coilsMap);
 		} catch (ModbusProtocolException e) {
             e.printStackTrace();
         } catch (ModbusNumberException e) {
             e.printStackTrace();
         } catch (ModbusIOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                master.disconnect();
-            } catch (ModbusIOException e) {
-                e.printStackTrace();
-            }
         }
 		return coilsMap;
 	}
@@ -90,12 +82,6 @@ public class MasterTCP {
             e.printStackTrace();
         } catch (ModbusIOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                master.disconnect();
-            } catch (ModbusIOException e) {
-                e.printStackTrace();
-            }
         }
 		return registersMap;
 	}
@@ -117,12 +103,6 @@ public class MasterTCP {
             e.printStackTrace();
         } catch (ModbusIOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                master.disconnect();
-            } catch (ModbusIOException e) {
-                e.printStackTrace();
-            }
         }
 		return registersMap;
 	}
@@ -132,19 +112,16 @@ public class MasterTCP {
 			if (!master.isConnected()){
 				master.connect();
 			}
-		} catch (ModbusIOException e) {
-				e.printStackTrace();
-		}
-		for (Map.Entry<Integer, Boolean> entry : coilsMap.entrySet()){
-			int address = entry.getKey();
-			boolean value = entry.getValue();
-			try {
+		
+			for (Map.Entry<Integer, Boolean> entry : coilsMap.entrySet()){
+				int address = entry.getKey();
+				boolean value = entry.getValue();
 				master.writeSingleCoil(slaveId, address, value);
-			} catch (ModbusProtocolException | ModbusNumberException
-					| ModbusIOException e) {
-				e.printStackTrace();
+				frame.setAcutuatorData(coilsMap);
 			}
-				
+		} catch (ModbusProtocolException | ModbusNumberException
+				| ModbusIOException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -154,6 +131,10 @@ public class MasterTCP {
 				master.connect();
 			}
 			master.writeMultipleCoils(slaveId, address, coils);
+			HashMap<Integer, Boolean> coilsMap = new HashMap<Integer, Boolean>();
+			for (int idx = 0; idx <= coils.length; idx++)
+				coilsMap.put(address + idx, coils[idx]);
+			frame.setAcutuatorData(coilsMap);
 		} catch (ModbusProtocolException | ModbusNumberException
 				| ModbusIOException e) {
 			// TODO Auto-generated catch block
@@ -227,8 +208,10 @@ public class MasterTCP {
 				System.out.println("cannot connected with " + address);
 				e.printStackTrace();
 			}
-        if (master.isConnected())
+        if (master.isConnected()){
         	System.out.println("connected with " + address);
+        	frame.setCommunicationData("modbus", true);
+        }
 	}
 	
 	
