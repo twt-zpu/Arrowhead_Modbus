@@ -41,13 +41,12 @@ public class SlaveTCP {
 	private ModbusGUI frame = new ModbusDataDisplay();
 	
 	public SlaveTCP(String[] args){
+		frame.init("Arrowhead Client Consumer with PLC");
+		frame.setVisible(true);
+		
 		this.consumer = new Consumer(args);
 		String address = props.getProperty("remote_io_address", "10.12.90.14");
 		consumer.setServerAddress(address);
-		
-		frame.init("Arrowhead Client Consumer");
-		frame.setVisible(true);
-		
 		try {
 			setSlave();
 		} catch (IllegalDataAddressException | IllegalDataValueException

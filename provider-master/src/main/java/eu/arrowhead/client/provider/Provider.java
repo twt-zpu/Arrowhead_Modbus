@@ -63,7 +63,7 @@ public class Provider extends ArrowheadClientMain {
 			args[idx] = argsList.get(idx);
 		}
 		init(ClientType.PROVIDER, args, classes, packages);
-		frame.init("Arrowhead Client Provider");
+		frame.init("Arrowhead Client Provider with production line");
 		frame.setVisible(true);
 		//Compile the base of the Service Registry URL
 		getServiceRegistryUrl();

@@ -112,13 +112,14 @@ public class MasterTCP {
 			if (!master.isConnected()){
 				master.connect();
 			}
-		
+			frame.setAcutuatorData(coilsMap);
+			
 			for (Map.Entry<Integer, Boolean> entry : coilsMap.entrySet()){
 				int address = entry.getKey();
 				boolean value = entry.getValue();
 				master.writeSingleCoil(slaveId, address, value);
-				frame.setAcutuatorData(coilsMap);
 			}
+			
 		} catch (ModbusProtocolException | ModbusNumberException
 				| ModbusIOException e) {
 			e.printStackTrace();
@@ -130,11 +131,13 @@ public class MasterTCP {
 			if (!master.isConnected()){
 				master.connect();
 			}
-			master.writeMultipleCoils(slaveId, address, coils);
+			
 			HashMap<Integer, Boolean> coilsMap = new HashMap<Integer, Boolean>();
-			for (int idx = 0; idx <= coils.length; idx++)
+			for (int idx = 0; idx < coils.length; idx++)
 				coilsMap.put(address + idx, coils[idx]);
 			frame.setAcutuatorData(coilsMap);
+			
+			master.writeMultipleCoils(slaveId, address, coils);
 		} catch (ModbusProtocolException | ModbusNumberException
 				| ModbusIOException e) {
 			// TODO Auto-generated catch block

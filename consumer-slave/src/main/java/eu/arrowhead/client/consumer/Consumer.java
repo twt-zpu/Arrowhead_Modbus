@@ -64,7 +64,7 @@ public class Consumer {
     	
     	Response response = Utility.sendRequest(providerUrl, "GET", null);
     	
-    	if (response.getStatusInfo() == Status.OK )
+    	if (response.getStatus() > 0)
     		frame.setCommunicationData("client", true);
     	else
     		frame.setCommunicationData("client", false);
