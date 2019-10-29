@@ -1,21 +1,21 @@
 [
   {
     "service": {
-      "serviceDefinition": "SetSlaveAddress",
+      "serviceDefinition": "Setslave-with-piAddress",
       "interfaces": [
         "JSON"
       ],
       "serviceMetadata": {}
     },
     "consumer": {
-      "systemName": "slave",
+      "systemName": "slave-with-pi-with-pi",
       "address": "10.12.90.10",
       "port": 8081,
       "authenticationInfo": "null"
     },
     "providerSystem": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "priority": 1,
@@ -32,14 +32,14 @@
       "serviceMetadata": { }
     },
     "consumer": {
-      "systemName": "slave",
+      "systemName": "slave-with-pi",
       "address": "10.12.90.10",
       "port": 8081,
       "authenticationInfo": "null"
     },
     "providerSystem": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "priority": 1,
@@ -56,14 +56,14 @@
       "serviceMetadata": { }
     },
     "consumer": {
-      "systemName": "slave",
+      "systemName": "slave-with-pi",
       "address": "10.12.90.10",
       "port": 8081,
       "authenticationInfo": "null"
     },
     "providerSystem": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "priority": 1,
@@ -80,14 +80,14 @@
       "serviceMetadata": {}
     },
     "consumer": {
-      "systemName": "slave",
+      "systemName": "slave-with-pi",
       "address": "10.12.90.10",
       "port": 8081,
       "authenticationInfo": "null"
     },
     "providerSystem": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "priority": 1,
@@ -104,14 +104,14 @@
       "serviceMetadata": {}
     },
     "consumer": {
-      "systemName": "slave",
+      "systemName": "slave-with-pi",
       "address": "10.12.90.10",
       "port": 8081,
       "authenticationInfo": "null"
     },
     "providerSystem": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "priority": 1,
@@ -128,14 +128,14 @@
       "serviceMetadata": { }
     },
     "consumer": {
-      "systemName": "slave",
+      "systemName": "slave-with-pi",
       "address": "10.12.90.10",
       "port": 8081,
       "authenticationInfo": "null"
     },
     "providerSystem": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "priority": 1,
@@ -152,14 +152,14 @@
       "serviceMetadata": {}
     },
     "consumer": {
-      "systemName": "slave",
+      "systemName": "slave-with-pi",
       "address": "10.12.90.10",
       "port": 8081,
       "authenticationInfo": "null"
     },
     "providerSystem": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "priority": 1,
@@ -176,14 +176,14 @@
       "serviceMetadata": { }
     },
     "consumer": {
-      "systemName": "slave",
+      "systemName": "slave-with-pi",
       "address": "10.12.90.10",
       "port": 8081,
       "authenticationInfo": "null"
     },
     "providerSystem": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "priority": 1,
@@ -200,14 +200,14 @@
       "serviceMetadata": { }
     },
     "consumer": {
-      "systemName": "slave",
+      "systemName": "slave-with-pi",
       "address": "10.12.90.10",
       "port": 8081,
       "authenticationInfo": "null"
     },
     "providerSystem": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "priority": 1,

@@ -1,15 +1,15 @@
 [
   {
     "consumer": {
-      "systemName": "slave",
+      "systemName": "slave-with-pi",
       "address": "10.12.90.10",
       "port": 8081,
       "authenticationInfo": "null"
     },
     "providerList": [
       {
-        "systemName": "modbus",
-        "address": "0.0.0.0",
+        "systemName": "modbus-as-pi",
+        "address": "10.12.90.9",
         "port": 8460
       }
     ],

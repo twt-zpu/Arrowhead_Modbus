@@ -9,13 +9,13 @@
       }
     },
     "provider": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "serviceUri": "modbus/SetSlaveAddress/{slave_address}",
     "udp": false,
-    "endOfValidity": "2020-01-01T00:00:00.000",
+    "endOfValidity": "2021-01-01T00:00:00.000",
     "version": 1
   },
 
@@ -29,13 +29,13 @@
       }
     },
     "provider": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "serviceUri": "modbus/GetCoils/{offset}/{quantity}",
     "udp": false,
-    "endOfValidity": "2020-01-01T00:00:00.000",
+    "endOfValidity": "2021-01-01T00:00:00.000",
     "version": 1
   },
 
@@ -49,13 +49,13 @@
       }
     },
     "provider": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "serviceUri": "modbus/GetDiscreteInputs/{offset}/{quantity}",
     "udp": false,
-    "endOfValidity": "2020-01-01T00:00:00.000",
+    "endOfValidity": "2021-01-01T00:00:00.000",
     "version": 1
   },
 
@@ -69,13 +69,13 @@
       }
     },
     "provider": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "serviceUri": "modbus/GetHoldingRegisters/{offset}/{quantity}",
     "udp": false,
-    "endOfValidity": "2020-01-01T00:00:00.000",
+    "endOfValidity": "2021-01-01T00:00:00.000",
     "version": 1
   },
 
@@ -89,13 +89,13 @@
       }
     },
     "provider": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "serviceUri": "modbus/GetInputRegisters/{offset}/{quantity}",
     "udp": false,
-    "endOfValidity": "2020-01-01T00:00:00.000",
+    "endOfValidity": "2021-01-01T00:00:00.000",
     "version": 1
   },
 
@@ -109,13 +109,13 @@
       }
     },
     "provider": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "serviceUri": "modbus/SetCoils",
     "udp": false,
-    "endOfValidity": "2020-01-01T00:00:00.000",
+    "endOfValidity": "2021-01-01T00:00:00.000",
     "version": 1
   },
 
@@ -129,13 +129,13 @@
       }
     },
     "provider": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "serviceUri": "modbus/SetCoils/{offset}/{values}",
     "udp": false,
-    "endOfValidity": "2020-01-01T00:00:00.000",
+    "endOfValidity": "2021-01-01T00:00:00.000",
     "version": 1
   },
 
@@ -149,13 +149,13 @@
       }
     },
     "provider": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "serviceUri": "modbus/SetHoldingRegisters",
     "udp": false,
-    "endOfValidity": "2020-01-01T00:00:00.000",
+    "endOfValidity": "2021-01-01T00:00:00.000",
     "version": 1
   },
 
@@ -169,13 +169,13 @@
       }
     },
     "provider": {
-      "systemName": "modbus",
-      "address": "0.0.0.0",
+      "systemName": "modbus-as-pi",
+      "address": "10.12.90.9",
       "port": 8460
     },
     "serviceUri": "modbus/SetHoldingRegisters/{offset}/{values}",
     "udp": false,
-    "endOfValidity": "2020-01-01T00:00:00.000",
+    "endOfValidity": "2021-01-01T00:00:00.000",
     "version": 1
   }
 
