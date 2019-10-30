@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import eu.arrowhead.client.modbus.SlaveTCP;
+
 public class App {
 	private static SlaveTCP slave;
 	

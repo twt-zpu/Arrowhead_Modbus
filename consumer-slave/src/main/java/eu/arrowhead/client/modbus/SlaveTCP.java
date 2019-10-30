@@ -1,4 +1,4 @@
-package eu.arrowhead.client.consumer;
+package eu.arrowhead.client.modbus;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -24,6 +24,7 @@ import com.intelligt.modbus.jlibmodbus.utils.TcpClientInfo;
 
 import eu.arrowhead.client.common.Utility;
 import eu.arrowhead.client.common.misc.TypeSafeProperties;
+import eu.arrowhead.client.consumer.Consumer;
 
 public class SlaveTCP {
 	private TypeSafeProperties props = Utility.getProp();
