@@ -37,6 +37,7 @@ public class Resource {
 	public Response setServerAddress(@Context SecurityContext context, @QueryParam("token") String token, 
 			@QueryParam("signature") String signature, @PathParam("slave_address") String address) {
 		frame.setCommunicationData("client", true);
+		frame.setCommunicationData("modbus", true);
 		master.setModbusMaster(address);
 		System.out.println("set slave adress: " + address);
 	    return Response.status(Status.OK).build();
@@ -81,6 +82,7 @@ public class Resource {
 	    	DiscreteInputsSlave.put((Integer)((int)coilEntry.getKey() + 522), (Boolean) coilEntry.getValue());
 	    ModbusData.entry.setCoils(DiscreteInputsSlave);
 	    ModbusData.entry.setDiscreteInputs(discreteInputs);
+	    frame.setSensorData(discreteInputs);
 	    return Response.status(Status.OK).entity(measurement).build();
 	}
 	
