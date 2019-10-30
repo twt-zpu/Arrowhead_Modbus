@@ -1,4 +1,4 @@
-package eu.arrowhead.client.provider;
+package eu.arrowhead.client.modbus;
 
 import java.net.InetAddress;
 import java.util.HashMap;
@@ -36,12 +36,6 @@ public class MasterTCP {
             e.printStackTrace();
         } catch (ModbusIOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                master.disconnect();
-            } catch (ModbusIOException e) {
-                e.printStackTrace();
-            }
         }
 		return coilsMap;
 	}
@@ -63,12 +57,6 @@ public class MasterTCP {
             e.printStackTrace();
         } catch (ModbusIOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                master.disconnect();
-            } catch (ModbusIOException e) {
-                e.printStackTrace();
-            }
         }
 		return coilsMap;
 	}
@@ -90,12 +78,6 @@ public class MasterTCP {
             e.printStackTrace();
         } catch (ModbusIOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                master.disconnect();
-            } catch (ModbusIOException e) {
-                e.printStackTrace();
-            }
         }
 		return registersMap;
 	}
@@ -117,12 +99,6 @@ public class MasterTCP {
             e.printStackTrace();
         } catch (ModbusIOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                master.disconnect();
-            } catch (ModbusIOException e) {
-                e.printStackTrace();
-            }
         }
 		return registersMap;
 	}

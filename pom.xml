@@ -21,6 +21,8 @@
     <module>client-common</module>
     <module>consumer-slave</module>
     <module>provider-master</module>
+	<module>publisher</module>
+	<module>subscriber</module>
   </modules>
 
   <properties>

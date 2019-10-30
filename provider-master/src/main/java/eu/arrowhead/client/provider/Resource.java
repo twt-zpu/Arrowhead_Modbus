@@ -18,6 +18,8 @@ import javax.ws.rs.core.SecurityContext;
 
 import eu.arrowhead.client.common.model.ModbusMeasurement;
 import eu.arrowhead.client.common.model.ModbusMeasurementEntry;
+import eu.arrowhead.client.modbus.MasterTCP;
+import eu.arrowhead.client.publisher.Publisher;
 
 
 @Path("/")
@@ -27,6 +29,7 @@ import eu.arrowhead.client.common.model.ModbusMeasurementEntry;
 public class Resource {
 	private String providerName = "master";
 	private static MasterTCP master = new MasterTCP();
+	private static Publisher publisher = new Publisher();
 
 	@GET
 	@Path("modbus/SetSlaveAddress/{slave_address}")
@@ -46,6 +49,7 @@ public class Resource {
 	    ModbusMeasurementEntry entry = new ModbusMeasurementEntry();
 	    List<ModbusMeasurementEntry> entryList = new ArrayList<>();
 	    HashMap<Integer, Boolean> coils = master.readCoils(offset, quantity);
+	    publisher.publishEvents("coil", coils);
 	    entry.setCoils(coils);
 	    entryList.add(entry);
 	    measurement.setE(entryList);
@@ -61,6 +65,7 @@ public class Resource {
 	    ModbusMeasurementEntry entry = new ModbusMeasurementEntry();
 	    List<ModbusMeasurementEntry> entryList = new ArrayList<>();
 	    HashMap<Integer, Boolean> discreteInputs = master.readDiscreteInputs(offset, quantity);
+	    publisher.publishEvents("discreteInput", discreteInputs);
 	    entry.setDiscreteInputs(discreteInputs);
 	    entryList.add(entry);
 	    measurement.setE(entryList);
@@ -75,6 +80,7 @@ public class Resource {
 	    ModbusMeasurementEntry entry = new ModbusMeasurementEntry();
 	    List<ModbusMeasurementEntry> entryList = new ArrayList<>();
 	    HashMap<Integer, Integer> holdingRegisters = master.readHoldingRegisters(offset, quantity);
+	    publisher.publishEvents("holdingRegister", holdingRegisters);
 	    entry.setHoldingRegisters(holdingRegisters);
 	    entryList.add(entry);
 	    measurement.setE(entryList);
@@ -88,8 +94,9 @@ public class Resource {
 	    ModbusMeasurement measurement = new ModbusMeasurement(providerName, System.currentTimeMillis(), " ", 1);
 	    ModbusMeasurementEntry entry = new ModbusMeasurementEntry();
 	    List<ModbusMeasurementEntry> entryList = new ArrayList<>();
-	    HashMap<Integer, Integer> holdingRegisters = master.readInputRegisters(offset, quantity);
-	    entry.setHoldingRegisters(holdingRegisters);
+	    HashMap<Integer, Integer> inputRegisters = master.readInputRegisters(offset, quantity);
+	    publisher.publishEvents("inputRegister", inputRegisters);
+	    entry.setHoldingRegisters(inputRegisters);
 	    entryList.add(entry);
 	    measurement.setE(entryList);
 	    return Response.status(Status.OK).entity(measurement).build();
@@ -106,6 +113,7 @@ public class Resource {
 			boolean value = Boolean.valueOf(coil_key_value[1]);
 			coilsMap.put(key, value);
 		}
+		publisher.publishEvents("coil", coilsMap);
 		master.writeCoils(coilsMap);
 	    return Response.status(Status.OK).entity(measurement).build();
 	}
@@ -135,6 +143,7 @@ public class Resource {
 			int value = Integer.valueOf(coil_key_value[1]);
 			registersMap.put(key, value);
 		}
+		publisher.publishEvents("holdingRegister", registersMap);
 		master.writeHoldingRegisters(registersMap);
 	    return Response.status(Status.OK).entity(measurement).build();
 	}
