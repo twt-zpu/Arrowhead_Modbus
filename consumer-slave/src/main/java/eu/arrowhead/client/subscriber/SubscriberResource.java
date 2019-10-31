@@ -10,6 +10,8 @@
 package eu.arrowhead.client.subscriber;
 
 import eu.arrowhead.client.common.model.Event;
+import eu.arrowhead.client.modbus.ModbusData;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -17,6 +19,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.apache.log4j.Logger;
 
 @Path("notify")
@@ -37,7 +40,12 @@ public class SubscriberResource {
 	@POST
 	public Response receiveEvent(Event event) {
 		// log.info("Received new event: " + event.toString());
-		System.out.println("Received new event: " + event.toString());
+		System.out.println("Received new event: " + event.getType() + " (" + event.getPayload() + ")");
+		ModbusData.setTopic(event.getType(), event.getPayload());
+		switch (event.getType()){
+		case "modbus/product_processing_finished": Boolean.parseBoolean(event.getPayload()); break;
+		default: break;
+		}
 		//business logic here reacting to the event
 		return Response.ok().build();
 	}

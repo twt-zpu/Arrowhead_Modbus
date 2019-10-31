@@ -31,6 +31,7 @@ import eu.arrowhead.client.common.model.ModbusMeasurement;
 import eu.arrowhead.client.common.model.ModbusMeasurementEntry;
 import eu.arrowhead.client.common.model.OrchestrationResponse;
 import eu.arrowhead.client.common.model.ServiceRequestForm;
+import eu.arrowhead.client.modbus.ModbusData;
 
 public class Consumer {
 	private String slaveAddress;
@@ -45,45 +46,131 @@ public class Consumer {
     private final String consumerSystemAddress = props.getProperty("consumer_system_address", "0.0.0.0");
     private final Integer consumerSystemPort = Integer.valueOf(props.getProperty("consumer_system_port", "8080"));
     
+    
     public Consumer(String[] args) {
         System.out.println("Working directory: " + System.getProperty("user.dir"));
         getOrchestratorUrl(args);
+        setServerAddress();
     }
     
-    public void setServerAddress(String slaveAddress){
+    public void start(){
+    	readData();
+    	writeData();
+    }
+    
+    private void readData(){
+    	HashMap<Integer, Integer> dataQuantity;
+    	
+    	dataQuantity = ModbusData.getCoilsRead();
+		for(Map.Entry<Integer, Integer> entry: dataQuantity.entrySet()){
+			HashMap<Integer, Boolean> coils;
+			coils = getCoils(entry.getKey(), entry.getValue());
+			ModbusData.getEntryToWrite().setCoils(coils);
+			ModbusData.releaseEntryToWrite();
+		}
+		
+		dataQuantity = ModbusData.getDiscreteInputs();
+		for(Map.Entry<Integer, Integer> entry: dataQuantity.entrySet()){
+			HashMap<Integer, Boolean> discreteInputs;
+			discreteInputs = getDiscreteInputs(entry.getKey(), entry.getValue());
+			ModbusData.getEntryToWrite().setDiscreteInputs(discreteInputs);;
+			ModbusData.releaseEntryToWrite();
+		}
+		
+		dataQuantity = ModbusData.getDiscreteInputs();
+		for(Map.Entry<Integer, Integer> entry: dataQuantity.entrySet()){
+			HashMap<Integer, Boolean> discreteInputs;
+			discreteInputs = getDiscreteInputs(entry.getKey(), entry.getValue());
+			ModbusData.getEntryToWrite().setDiscreteInputs(discreteInputs);
+			ModbusData.releaseEntryToWrite();
+		}
+		
+		dataQuantity = ModbusData.getHoldingRegistersRead();
+		for(Map.Entry<Integer, Integer> entry: dataQuantity.entrySet()){
+			HashMap<Integer, Integer> holdingRegisters;
+			holdingRegisters = getHoldingRegisters(entry.getKey(), entry.getValue());
+			ModbusData.getEntryToWrite().setHoldingRegisters(holdingRegisters);
+			ModbusData.releaseEntryToWrite();
+		}
+		
+		dataQuantity = ModbusData.getInputRegisters();
+		for(Map.Entry<Integer, Integer> entry: dataQuantity.entrySet()){
+			HashMap<Integer, Integer> inputRegisters;
+			inputRegisters = getHoldingRegisters(entry.getKey(), entry.getValue());
+			ModbusData.getEntryToWrite().setInputRegisters(inputRegisters);
+			ModbusData.releaseEntryToWrite();
+		}
+    }
+    
+    private void writeData(){
+    	HashMap<Integer, Integer> dataQuantity;
+    	
+    	dataQuantity = ModbusData.getCoilsWrite();
+    	HashMap<Integer, Boolean> coils = ModbusData.getEntryToRead().getCoils();
+		ModbusData.releaseEntryToRead();
+		for(Map.Entry<Integer, Integer> entry: dataQuantity.entrySet()){
+			int address = entry.getKey();
+			int quantity = entry.getValue();
+			boolean[] dataToWrite = new boolean[quantity];
+			for (int idx = 0; idx < quantity; idx++){
+				int offset = address + idx;
+				dataToWrite[idx] = coils.get(offset);
+			}
+			setCoilsAtID(address, dataToWrite);
+		}
+		
+		dataQuantity = ModbusData.getCoilsWrite();
+    	HashMap<Integer, Integer> registers = ModbusData.getEntryToRead().getHoldingRegisters();
+		ModbusData.releaseEntryToRead();
+		for(Map.Entry<Integer, Integer> entry: dataQuantity.entrySet()){
+			int address = entry.getKey();
+			int quantity = entry.getValue();
+			int[] dataToWrite = new int[quantity];
+			for (int idx = 0; idx < quantity; idx++){
+				int offset = address + idx;
+				dataToWrite[idx] = registers.get(offset);
+			}
+			setHoldingRegistersAtID(address, dataToWrite);
+		}
+    }
+    
+    public void setServerAddress(){
     	String method = "SetSlaveAddress";
-    	this.slaveAddress = slaveAddress;
+    	slaveAddress = props.getProperty("remote_io_address", "10.12.90.14");
     	ServiceRequestForm srf = compileSRF(method);
     	String providerUrl = sendOrchestrationRequest(srf, method);
-    	Utility.sendRequest(providerUrl, "GET", null);
+    	if (Utility.sendRequest(providerUrl, "GET", null).getStatus() == 0){
+    		System.out.println("Consumer/setServerAddress: provider can not connect with " + slaveAddress);
+    		System.exit(0);
+    	}
     }
     
-    public ModbusMeasurementEntry getCoils(int offset, int quantity){
+    public HashMap<Integer, Boolean> getCoils(int offset, int quantity){
     	String method = "GetCoils";
     	ServiceRequestForm srf = compileSRF(method);
     	String providerUrl = sendOrchestrationRequest(srf, method, offset, quantity);
-    	return consumeService(providerUrl);
+    	return consumeService(providerUrl).getCoils();
     }
     
-    public ModbusMeasurementEntry getDiscreteInputs(int offset, int quantity){
+    public HashMap<Integer, Boolean> getDiscreteInputs(int offset, int quantity){
     	String method = "GetDiscreteInputs";
     	ServiceRequestForm srf = compileSRF(method);
     	String providerUrl = sendOrchestrationRequest(srf, method, offset, quantity);
-    	return consumeService(providerUrl);
+    	return consumeService(providerUrl).getDiscreteInputs();
     }
     
-    public ModbusMeasurementEntry getHoldingRegisters(int offset, int quantity){
+    public HashMap<Integer, Integer> getHoldingRegisters(int offset, int quantity){
     	String method = "GetHoldingRegisters";
     	ServiceRequestForm srf = compileSRF(method);
     	String providerUrl = sendOrchestrationRequest(srf, method, offset, quantity);
-    	return consumeService(providerUrl);
+    	return consumeService(providerUrl).getHoldingRegisters();
     }
     
-    public ModbusMeasurementEntry getInputRegisters(int offset, int quantity){
+    public HashMap<Integer, Integer> getInputRegisters(int offset, int quantity){
     	String method = "GetInputRegisters";
     	ServiceRequestForm srf = compileSRF(method);
     	String providerUrl = sendOrchestrationRequest(srf, method, offset, quantity);
-    	return consumeService(providerUrl);
+    	return consumeService(providerUrl).getInputRegisters();
     }
     
     public void setCoils(HashMap<Integer, Boolean> coilsMap){

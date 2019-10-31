@@ -1,8 +1,8 @@
 package eu.arrowhead.client.modbus;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
-
 import java.util.Map;
 
 import com.intelligt.modbus.jlibmodbus.Modbus;
@@ -20,7 +20,7 @@ public class MasterTCP {
 	
 	
   	public HashMap<Integer, Boolean> readCoils(int offset, int quantity){
-		HashMap<Integer, Boolean> coilsMap = new HashMap<Integer, Boolean>();
+		HashMap<Integer, Boolean> coils = new HashMap<Integer, Boolean>();
 		try{
 			if (!master.isConnected()){
 				master.connect();
@@ -28,20 +28,18 @@ public class MasterTCP {
 			boolean[] coilsArray = master.readCoils(slaveId, offset, quantity);
 			for (int index = 0; index < quantity; index++){
 				int offsetIndex = offset + index;
-				coilsMap.put(offsetIndex, coilsArray[index]);
+				coils.put(offsetIndex, coilsArray[index]);
 			}
-		} catch (ModbusProtocolException e) {
-            e.printStackTrace();
-        } catch (ModbusNumberException e) {
-            e.printStackTrace();
-        } catch (ModbusIOException e) {
+			ModbusData.getEntryToWrite().setCoils(coils);
+			ModbusData.releaseEntryToWrite();
+		} catch (ModbusProtocolException | ModbusNumberException | ModbusIOException e) {
             e.printStackTrace();
         }
-		return coilsMap;
+		return coils;
 	}
   	
 	public HashMap<Integer, Boolean> readDiscreteInputs(int offset, int quantity){
-		HashMap<Integer, Boolean> coilsMap = new HashMap<Integer, Boolean>();
+		HashMap<Integer, Boolean> discreteInputs = new HashMap<Integer, Boolean>();
 		try{
 			if (!master.isConnected()){
 				master.connect();
@@ -49,20 +47,18 @@ public class MasterTCP {
 			boolean[] coilsArray = master.readDiscreteInputs(slaveId, offset, quantity);
 			for (int index = 0; index < quantity; index++){
 				int offsetIndex = offset + index;
-				coilsMap.put(offsetIndex, coilsArray[index]);
+				discreteInputs.put(offsetIndex, coilsArray[index]);
 			}
-		} catch (ModbusProtocolException e) {
-            e.printStackTrace();
-        } catch (ModbusNumberException e) {
-            e.printStackTrace();
-        } catch (ModbusIOException e) {
+			ModbusData.getEntryToWrite().setDiscreteInputs(discreteInputs);
+			ModbusData.releaseEntryToWrite();
+		} catch (ModbusProtocolException | ModbusNumberException | ModbusIOException e) {
             e.printStackTrace();
         }
-		return coilsMap;
+		return discreteInputs;
 	}
   	
   	public HashMap<Integer, Integer> readHoldingRegisters(int offset, int quantity){
-		HashMap<Integer, Integer> registersMap = new HashMap<Integer, Integer>();
+		HashMap<Integer, Integer> registers = new HashMap<Integer, Integer>();
 		try{
 			if (!master.isConnected()){
 				master.connect();
@@ -70,20 +66,18 @@ public class MasterTCP {
 			int[] registersArray = master.readHoldingRegisters(slaveId, offset, quantity);
 			for (int index = 0; index < quantity; index++){
 				int offsetIndex = offset + index;
-				registersMap.put(offsetIndex, registersArray[index]);
+				registers.put(offsetIndex, registersArray[index]);
 			}
-		} catch (ModbusProtocolException e) {
-            e.printStackTrace();
-        } catch (ModbusNumberException e) {
-            e.printStackTrace();
-        } catch (ModbusIOException e) {
+			ModbusData.getEntryToWrite().setHoldingRegisters(registers);
+			ModbusData.releaseEntryToWrite();
+		} catch (ModbusProtocolException | ModbusNumberException | ModbusIOException e) {
             e.printStackTrace();
         }
-		return registersMap;
+		return registers;
 	}
   	
   	public HashMap<Integer, Integer> readInputRegisters(int offset, int quantity){
-		HashMap<Integer, Integer> registersMap = new HashMap<Integer, Integer>();
+		HashMap<Integer, Integer> registers = new HashMap<Integer, Integer>();
 		try{
 			if (!master.isConnected()){
 				master.connect();
@@ -91,19 +85,17 @@ public class MasterTCP {
 			int[] registersArray = master.readInputRegisters(slaveId, offset, quantity);
 			for (int index = 0; index < quantity; index++){
 				int offsetIndex = offset + index;
-				registersMap.put(offsetIndex, registersArray[index]);
+				registers.put(offsetIndex, registersArray[index]);
 			}
-		} catch (ModbusProtocolException e) {
-            e.printStackTrace();
-        } catch (ModbusNumberException e) {
-            e.printStackTrace();
-        } catch (ModbusIOException e) {
+			ModbusData.getEntryToWrite().setHoldingRegisters(registers);
+			ModbusData.releaseEntryToWrite();
+		} catch (ModbusProtocolException | ModbusNumberException | ModbusIOException e) {
             e.printStackTrace();
         }
-		return registersMap;
+		return registers;
 	}
 	
-	public void writeCoils(HashMap<Integer, Boolean> coilsMap){
+	public void writeCoils(HashMap<Integer, Boolean> coils){
 		try {
 			if (!master.isConnected()){
 				master.connect();
@@ -111,7 +103,7 @@ public class MasterTCP {
 		} catch (ModbusIOException e) {
 				e.printStackTrace();
 		}
-		for (Map.Entry<Integer, Boolean> entry : coilsMap.entrySet()){
+		for (Map.Entry<Integer, Boolean> entry : coils.entrySet()){
 			int address = entry.getKey();
 			boolean value = entry.getValue();
 			try {
@@ -119,9 +111,10 @@ public class MasterTCP {
 			} catch (ModbusProtocolException | ModbusNumberException
 					| ModbusIOException e) {
 				e.printStackTrace();
-			}
-				
+			}	
 		}
+		ModbusData.getEntryToWrite().setCoils(coils);
+		ModbusData.releaseEntryToWrite();
 	}
 	
 	public void writeCoilsAtID(int address, boolean[] coils){
@@ -130,6 +123,8 @@ public class MasterTCP {
 				master.connect();
 			}
 			master.writeMultipleCoils(slaveId, address, coils);
+			ModbusData.getEntryToWrite().setCoils(address, coils);
+			ModbusData.releaseEntryToWrite();
 		} catch (ModbusProtocolException | ModbusNumberException
 				| ModbusIOException e) {
 			// TODO Auto-generated catch block
@@ -137,7 +132,7 @@ public class MasterTCP {
 		}
 	}
 	
-	public void writeHoldingRegisters(HashMap<Integer, Integer> registersMap){
+	public void writeHoldingRegisters(HashMap<Integer, Integer> registers){
 		try {
 			if (!master.isConnected()){
 				master.connect();
@@ -145,7 +140,7 @@ public class MasterTCP {
 		} catch (ModbusIOException e) {
 				e.printStackTrace();
 		}
-		for (Map.Entry<Integer, Integer> entry : registersMap.entrySet()){
+		for (Map.Entry<Integer, Integer> entry : registers.entrySet()){
 			int address = entry.getKey();
 			int value = entry.getValue();
 			new Thread(new Runnable(){
@@ -159,6 +154,8 @@ public class MasterTCP {
 				}
 			}).start();
 		}
+		ModbusData.getEntryToWrite().setHoldingRegisters(registers);
+		ModbusData.releaseEntryToWrite();
 	}
 	
 	public void writeHoldingRegistersAtID(int address, int[] registers){	
@@ -172,6 +169,8 @@ public class MasterTCP {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		ModbusData.getEntryToWrite().setHoldingRegisters(address, registers);
+		ModbusData.releaseEntryToWrite();
 	}
 	
 	private void setTCPParameters(String address){
@@ -184,9 +183,7 @@ public class MasterTCP {
 			tcpParameters.setHost(InetAddress.getByAddress(ip));
 	        tcpParameters.setKeepAlive(true);
 	        tcpParameters.setPort(502);
-		} catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
+		} catch (RuntimeException | UnknownHostException e) {
             e.printStackTrace();
         }
 	}

@@ -14,13 +14,19 @@ import eu.arrowhead.client.common.Utility;
 import eu.arrowhead.client.common.misc.ClientType;
 import eu.arrowhead.client.common.model.ArrowheadSystem;
 import eu.arrowhead.client.common.model.EventFilter;
+import eu.arrowhead.client.modbus.ModbusData;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.ws.rs.core.UriBuilder;
+
 import org.apache.log4j.PropertyConfigurator;
 
 //This class extends ArrowheadClientMain, which is responsible for starting and stopping the web server
@@ -30,6 +36,7 @@ public class Subscriber extends ArrowheadClientMain {
 	private static Set<String> EVENT_TYPES = new HashSet<>();
 	private static String CONSUMER_NAME;
 	private static String EH_URI;
+	private ArrayList<String> modbusMemoryTypes = new ArrayList<String>();
 
 	private Subscriber() {
 		//Start the web server, read in the command line arguments
@@ -37,7 +44,8 @@ public class Subscriber extends ArrowheadClientMain {
 		String[] packages = {"eu.arrowhead.client.common"};
 		String[] args = {};
 		init(ClientType.SUBSCRIBER, args, classes, packages);
-
+		initEventsInModBusData();
+		
 		//Log4j configuration
 		PropertyConfigurator.configure(props);
 
@@ -60,6 +68,46 @@ public class Subscriber extends ArrowheadClientMain {
 		new Subscriber();
 	}
 
+	private void initEventsInModBusData(){
+		String[] eventTypes = props.getProperty("event_type").split(",");
+		String[] eventPositions = props.getProperty("event_position").split(",");
+		modbusMemoryTypes.add("discreteInput");
+		modbusMemoryTypes.add("coil");
+		modbusMemoryTypes.add("holdingRegister");
+		modbusMemoryTypes.add("inputRegister");
+		
+		if (eventTypes.length != eventPositions.length)
+			return;
+		
+		for (int idx = 0; idx < eventTypes.length; idx++){
+			if(eventTypes[idx].trim().isEmpty())
+				continue;
+			if (!checkEventPosition(eventPositions[idx]))
+				continue;
+			
+			// ModbusData.setTopic(eventTypes[idx].trim(), "");
+			ModbusData.setTopicPose(eventTypes[idx].trim(), eventPositions[idx]);
+		}
+		
+	}
+	
+	private boolean checkEventPosition(String eventPosition){
+		String[] eventPos = eventPosition.split("-");
+		if(eventPos.length != 2)
+			return false;
+		
+		if (!modbusMemoryTypes.contains(eventPos[0]))
+			return false;
+		
+		try {  
+		    Integer.parseInt(eventPos[1]);
+		} catch(NumberFormatException e){  
+			return false;  
+		}
+		
+		return true;
+	}
+	
 	//Shutdown the web server, overridden from ArrowheadClientMain. Unsubscribes from all the event types before stopping the JVM process.
 	@Override
 	protected void shutdown() {
